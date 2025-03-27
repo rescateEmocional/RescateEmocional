@@ -1,0 +1,53 @@
+﻿@model IEnumerable<RescateEmocional.Models.Conversacion>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mensaje)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdorganizacionNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdusuarioNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaInicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mensaje)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdorganizacionNavigation.Idorganizacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdusuarioNavigation.Idusuario)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Idconversacion">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Idconversacion">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Idconversacion">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
