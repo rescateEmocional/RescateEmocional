@@ -15,7 +15,7 @@ public partial class Administrador
 
     public int Idrol { get; set; }
 
-    public virtual Rol IdrolNavigation { get; set; } = null!;
+    public virtual Rol? IdrolNavigation { get; set; } = null!;
 
     public virtual ICollection<PeticionVerificacion> PeticionVerificacions { get; set; } = new List<PeticionVerificacion>();
 

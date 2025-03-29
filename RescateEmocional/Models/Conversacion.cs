@@ -15,9 +15,9 @@ public partial class Conversacion
 
     public string? Mensaje { get; set; }
 
-    public virtual Organizacion IdorganizacionNavigation { get; set; } = null!;
+    public virtual Organizacion? IdorganizacionNavigation { get; set; } = null!;
 
-    public virtual Usuario IdusuarioNavigation { get; set; } = null!;
+    public virtual Usuario? IdusuarioNavigation { get; set; } = null!;
 
     public virtual ICollection<Mensaje> Mensajes { get; set; } = new List<Mensaje>();
 }

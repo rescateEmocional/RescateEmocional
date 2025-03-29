@@ -21,7 +21,7 @@ public partial class Organizacion
 
     public virtual ICollection<Conversacion> Conversacions { get; set; } = new List<Conversacion>();
 
-    public virtual Rol IdrolNavigation { get; set; } = null!;
+    public virtual Rol? IdrolNavigation { get; set; } = null!;
 
     public virtual ICollection<PeticionVerificacion> PeticionVerificacions { get; set; } = new List<PeticionVerificacion>();
 

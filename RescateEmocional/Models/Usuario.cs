@@ -23,7 +23,7 @@ public partial class Usuario
 
     public virtual ICollection<Diario> Diarios { get; set; } = new List<Diario>();
 
-    public virtual Rol IdrolNavigation { get; set; } = null!;
+    public virtual Rol? IdrolNavigation { get; set; } = null!;
 
     public virtual ICollection<Administrador> Idadmins { get; set; } = new List<Administrador>();
 }
