@@ -19,6 +19,10 @@ public partial class Organizacion
 
     public int Idrol { get; set; }
 
+    public string CorreoElectronico { get; set; } = null!;
+
+    public string Contrasena { get; set; } = null!;
+
     public virtual ICollection<Conversacion> Conversacions { get; set; } = new List<Conversacion>();
 
     public virtual Rol? IdrolNavigation { get; set; } = null!;
