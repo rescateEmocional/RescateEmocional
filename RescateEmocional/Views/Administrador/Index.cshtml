@@ -71,7 +71,7 @@
                             <div class="card-body text-center">
                                 <p><strong>Correo:</strong> @item.CorreoElectronico</p>
                                 <p><strong>Contraseña:</strong> @item.Contrasena</p>
-                                <p><strong>Rol:</strong> @item.IdrolNavigation.Idrol</p>
+                                <p><strong>Rol:</strong> @item.IdrolNavigation.Nombre</p>
                                 <div class="d-flex justify-content-center gap-2">
                                     <a asp-action="Edit" asp-route-id="@item.Idadmin" class="btn btn-primary btn-sm">Editar</a>
                                     <a asp-action="Details" asp-route-id="@item.Idadmin" class="btn btn-info btn-sm">Detalles</a>

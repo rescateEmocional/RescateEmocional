@@ -28,8 +28,11 @@ namespace RescateEmocional.Controllers
                 query = query.Where(a => a.CorreoElectronico.Contains(administrador.CorreoElectronico));
             if (administrador.Idrol > 0)
                 query = query.Where(a => a.Idrol == administrador.Idrol);
+
+            query = query.OrderByDescending(administrador => administrador.Idadmin);
+
             if (topRegistro > 0)
-                query = query.Take(topRegistro).OrderByDescending(a => a.Idadmin);
+                query = query.Take(topRegistro);
 
             query = query.Include(a => a.IdrolNavigation);
 
