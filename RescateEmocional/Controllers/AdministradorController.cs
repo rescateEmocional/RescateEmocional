@@ -63,7 +63,7 @@ namespace RescateEmocional.Controllers
         // GET: Administrador/Create
         public IActionResult Create()
         {
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol");
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre");
             return View();
         }
 
@@ -80,7 +80,7 @@ namespace RescateEmocional.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", administrador.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", administrador.Idrol);
             return View(administrador);
         }
 
@@ -97,7 +97,7 @@ namespace RescateEmocional.Controllers
             {
                 return NotFound();
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", administrador.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", administrador.Idrol);
             return View(administrador);
         }
 
@@ -133,7 +133,7 @@ namespace RescateEmocional.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", administrador.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", administrador.Idrol);
             return View(administrador);
         }
 
