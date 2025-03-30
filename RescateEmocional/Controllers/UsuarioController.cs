@@ -13,9 +13,30 @@ namespace RescateEmocional.Controllers
     {
         private readonly RescateEmocionalContext _context;
 
+
         public UsuarioController(RescateEmocionalContext context)
         {
             _context = context;
+        }
+
+        public async Task<IActionResult> Organizaciones(string nombre, int topRecords = 10)
+        {
+            var organizacionesQuery = _context.Organizacions
+                .Where(o => o.Estado == 1) // Solo organizaciones verificadas
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(nombre))
+            {
+                organizacionesQuery = organizacionesQuery.Where(o => o.Nombre.Contains(nombre));
+            }
+
+            if (topRecords > 0)
+            {
+                organizacionesQuery = organizacionesQuery.Take(topRecords);
+            }
+
+            var organizaciones = await organizacionesQuery.ToListAsync();
+            return View(organizaciones);
         }
 
         // GET: Usuario

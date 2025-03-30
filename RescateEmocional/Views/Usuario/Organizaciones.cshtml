@@ -1,0 +1,70 @@
+﻿@model List<RescateEmocional.Models.Organizacion>
+
+@{
+    ViewData["Title"] = "Organizaciones Disponibles";
+}
+
+<h2 class="text-center">Organizaciones Disponibles</h2>
+
+<!-- Barra de búsqueda -->
+<form asp-action="Organizaciones" method="get">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label">Nombre de la organización</label>
+                <input type="text" name="nombre" class="form-control" placeholder="Buscar..." />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label">Cantidad de Organizaciones</label>
+                <select name="topRecords" class="form-control">
+                    <option selected value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="0">Todos</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </div>
+</form>
+
+<hr />
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Horario</th>
+            <th>Ubicación</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var organizacion in Model)
+        {
+            <tr>
+                <td>@organizacion.Nombre</td>
+                <td>@organizacion.Descripcion</td>
+                <td>@organizacion.Horario</td>
+                <td>@organizacion.Ubicacion</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#warehouseTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+                }
+            });
+        });
+    </script>
+}
