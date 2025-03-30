@@ -19,11 +19,27 @@ namespace RescateEmocional.Controllers
         }
 
         // GET: Administrador
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Administrador administrador, int topRegistro = 10)
         {
-            var rescateEmocionalContext = _context.Administradors.Include(a => a.IdrolNavigation);
-            return View(await rescateEmocionalContext.ToListAsync());
+            var query = _context.Administradors.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(administrador.Nombre))
+                query = query.Where(a => a.Nombre.Contains(administrador.Nombre));
+            if (!string.IsNullOrWhiteSpace(administrador.CorreoElectronico))
+                query = query.Where(a => a.CorreoElectronico.Contains(administrador.CorreoElectronico));
+            if (administrador.Idrol > 0)
+                query = query.Where(a => a.Idrol == administrador.Idrol);
+            if (topRegistro > 0)
+                query = query.Take(topRegistro).OrderByDescending(a => a.Idadmin);
+
+            query = query.Include(a => a.IdrolNavigation);
+
+            var roles = _context.Rols.ToList();
+            roles.Add(new Rol { Nombre = "SELECCIONAR", Idrol = 0 });
+            ViewData["Idrol"] = new SelectList(roles, "Idrol", "Nombre", 0);
+
+            return View(await query.ToListAsync());
         }
+
 
         // GET: Administrador/Details/5
         public async Task<IActionResult> Details(int? id)
