@@ -1,53 +1,61 @@
 ﻿@model IEnumerable<RescateEmocional.Models.Administrador>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Administradores";
 }
 
-<h1>Index</h1>
+<h1>Administradores</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Crear Nuevo</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CorreoElectronico)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Contrasena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdrolNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CorreoElectronico)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Contrasena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdrolNavigation.Idrol)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Idadmin">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Idadmin">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Idadmin">Delete</a>
-            </td>
-        </tr>
+
+<!-- Contenedor para DataTables -->
+<div class="table-responsive">
+    <table id="tablaAdministradores" class="table table-borderless">
+        <thead style="display: none;">
+            <tr>
+                <th>Administradores</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="card border-info mb-3" style="width: 90%; max-width: 600px; margin: auto;">
+                            <div class="card-header text-center">
+                                <strong>@item.Nombre</strong>
+                            </div>
+                            <div class="card-body text-center">
+                                <p><strong>Correo:</strong> @item.CorreoElectronico</p>
+                                <p><strong>Contraseña:</strong> @item.Contrasena</p>
+                                <p><strong>Rol:</strong> @item.IdrolNavigation.Idrol</p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.Idadmin" class="btn btn-primary btn-sm">Editar</a>
+                                    <a asp-action="Details" asp-route-id="@item.Idadmin" class="btn btn-info btn-sm">Detalles</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Idadmin" class="btn btn-danger btn-sm">Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tablaAdministradores').DataTable({
+                "paging": true,
+                
+                "pageLength": 5,  // Muestra 5 tarjetas por página
+                "language": languageTable
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
+
+
