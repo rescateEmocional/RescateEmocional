@@ -1,70 +1,273 @@
-﻿@model List<RescateEmocional.Models.Organizacion>
+﻿@model IEnumerable<RescateEmocional.Models.Organizacion>
 
 @{
-    ViewData["Title"] = "Organizaciones Disponibles";
+    ViewData["Title"] = "Organizaciones";
 }
 
-<h2 class="text-center">Organizaciones Disponibles</h2>
+<!-- Estilos personalizados integrados en la vista -->
+<style>
+    /* Truncar texto a 2 líneas */
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.4em;
+    }
 
-<!-- Barra de búsqueda -->
-<form asp-action="Organizaciones" method="get">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label class="control-label">Nombre de la organización</label>
-                <input type="text" name="nombre" class="form-control" placeholder="Buscar..." />
+    /* Animaciones para las cartas */
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+    }
+
+        /* Efecto hover para las cartas */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+    /* Estilo para el encabezado de la carta */
+    .card-header {
+        border-bottom: 2px solid rgba(0, 0, 0, 0.125);
+    }
+</style>
+
+<!-- Contenedor principal -->
+<div class="container mt-4">
+
+    <!-- Encabezado con título y botón de creación -->
+
+
+    <!-- Sección de controles: Búsqueda y paginación -->
+    <div class="row mb-4 g-3">
+        <!-- Campo de búsqueda -->
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="searchInput" class="form-control"
+                       placeholder="Buscar organizaciones..."
+                       aria-label="Buscar organizaciones">
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label class="control-label">Cantidad de Organizaciones</label>
-                <select name="topRecords" class="form-control">
-                    <option selected value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
+
+        <!-- Selector de elementos por página -->
+        <div class="col-md-6 d-flex align-items-center justify-content-end">
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-nowrap">Cantidad de organizaciones:</span>
+                <select class="form-select form-select-sm" id="itemsPerPage" style="width: 100px;">
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="36">36</option>
                     <option value="0">Todos</option>
                 </select>
             </div>
         </div>
-        <div class="col-md-4 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+
+    <!-- Contenedor de cartas -->
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="cardsContainer">
+        @foreach (var item in Model)
+        {
+                <!-- Carta individual -->
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <!-- Encabezado de la carta -->
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                            @Html.DisplayFor(modelItem => item.Nombre)
+                                <span class="badge bg-@(item.Estado == 1 ? "success" : "secondary") float-end">
+                                @(item.Estado == 1 ? "Activo" : "Inactivo")
+                                </span>
+                            </h5>
+                        </div>
+
+                        <!-- Cuerpo de la carta -->
+                        <div class="card-body">
+                            <dl class="mb-0">
+                                <dt>Descripción</dt>
+                                <dd class="text-truncate-2">@Html.DisplayFor(modelItem => item.Descripcion)</dd>
+
+                                <dt class="mt-2">Horario</dt>
+                                <dd>@Html.DisplayFor(modelItem => item.Horario)</dd>
+
+                                <dt class="mt-2">Ubicación</dt>
+                                <dd>@Html.DisplayFor(modelItem => item.Ubicacion)</dd>
+
+                                <dt class="mt-2">Rol</dt>
+                                <dd>@Html.DisplayFor(modelItem => item.IdrolNavigation.Idrol)</dd>
+                            </dl>
+                        </div>
+
+                        <!-- Pie de carta con acciones -->
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                  
+                                <!-- Botón Detalles -->
+                                <a asp-action="Details" asp-route-id="@item.Idorganizacion"
+                                   class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> Detalles
+                                </a>
+ 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        }
+    </div>
+
+    <!-- Sección de paginación -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <!-- Información de paginación -->
+            <div id="pageInfo" class="text-muted"></div>
+        </div>
+        <div class="col-md-6">
+            <!-- Controles de paginación -->
+            <nav aria-label="Navegación">
+                <ul class="pagination justify-content-end mb-0" id="paginationControls">
+                    <!-- Botón Página Anterior -->
+                    <li class="page-item" id="prevPage">
+                        <button class="page-link">
+                            <i class="bi bi-chevron-left"></i> Anterior
+                        </button>
+                    </li>
+                    <!-- Los números de página se generarán aquí -->
+                    <!-- Botón Página Siguiente -->
+                    <li class="page-item" id="nextPage">
+                        <button class="page-link">
+                            Siguiente <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
-</form>
-
-<hr />
-
-<table class="table table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Horario</th>
-            <th>Ubicación</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var organizacion in Model)
-        {
-            <tr>
-                <td>@organizacion.Nombre</td>
-                <td>@organizacion.Descripcion</td>
-                <td>@organizacion.Horario</td>
-                <td>@organizacion.Ubicacion</td>
-            </tr>
-        }
-    </tbody>
-</table>
+</div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            $('#warehouseTable').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+        <script>
+            // Inicialización cuando el DOM está listo
+            document.addEventListener('DOMContentLoaded', function() {
+                // ------------ VARIABLES GLOBALES ------------
+                const searchInput = document.getElementById('searchInput');  // Campo de búsqueda
+                const itemsPerPageSelect = document.getElementById('itemsPerPage');  // Selector de elementos por página
+                const cardsContainer = document.getElementById('cardsContainer');  // Contenedor de cartas
+                const paginationControls = document.getElementById('paginationControls');  // Controles de paginación
+                const pageInfo = document.getElementById('pageInfo');  // Información de página
+                const allCards = Array.from(cardsContainer.querySelectorAll('.col'));  // Todas las cartas
+                let currentPage = 1;  // Página actual
+                let rowsPerPage = parseInt(itemsPerPageSelect.value);  // Elementos por página
+                let filteredCards = [];  // Cartas filtradas
+
+                // ------------ FUNCIONES PRINCIPALES ------------
+
+                /** Filtra las cartas según el término de búsqueda */
+                function filterCards() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    filteredCards = allCards.filter(card => {
+                        return card.textContent.toLowerCase().includes(searchTerm);
+                    });
                 }
+
+                /** Actualiza toda la lógica de paginación */
+                function updatePagination() {
+                    const totalCards = filteredCards.length;
+                    const totalPages = rowsPerPage > 0 ? Math.ceil(totalCards / rowsPerPage) : 1;
+
+                    // Ajustar página actual si es necesario
+                    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+                    if (totalPages === 0) currentPage = 1;
+
+                    updatePaginationControls(totalPages);
+                    updatePageInfo(totalCards);
+                    updateVisibleCards();
+                }
+
+                /** Actualiza los controles de paginación */
+                function updatePaginationControls(totalPages) {
+                    // Limpiar números de página existentes
+                    const pageNumbers = paginationControls.querySelectorAll('.page-item:not(#prevPage):not(#nextPage)');
+                    pageNumbers.forEach(item => item.remove());
+
+                    // Generar nuevos números de página
+                    const startPage = Math.max(1, currentPage - 2);
+                    const endPage = Math.min(totalPages, currentPage + 2);
+
+                    for(let i = startPage; i <= endPage; i++) {
+                        const pageItem = document.createElement('li');
+                        pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                        pageItem.innerHTML = `<button class="page-link" onclick="changePage(${i})">${i}</button>`;
+                        paginationControls.insertBefore(pageItem, document.querySelector('#nextPage'));
+                    }
+
+                    // Actualizar estado de los botones
+                    document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
+                    document.getElementById('nextPage').classList.toggle('disabled', currentPage >= totalPages);
+                }
+
+                /** Actualiza la información de la página */
+                function updatePageInfo(totalCards) {
+                    const start = rowsPerPage > 0 ? (currentPage - 1) * rowsPerPage + 1 : 1;
+                    const end = rowsPerPage > 0 ? Math.min(currentPage * rowsPerPage, totalCards) : totalCards;
+                    pageInfo.textContent = `Mostrando ${start} a ${end} de ${totalCards} organizaciones`;
+                }
+
+                /** Actualiza las cartas visibles */
+                function updateVisibleCards() {
+                    // Ocultar todas las cartas
+                    allCards.forEach(card => card.style.display = 'none');
+
+                    // Mostrar solo las cartas del rango actual
+                    const start = rowsPerPage > 0 ? (currentPage - 1) * rowsPerPage : 0;
+                    const end = rowsPerPage > 0 ? start + rowsPerPage : filteredCards.length;
+
+                    filteredCards.slice(start, end).forEach(card => {
+                        card.style.display = 'block';
+                    });
+                }
+
+                /** Cambia a una página específica */
+                function changePage(newPage) {
+                    currentPage = newPage;
+                    filterCards();
+                    updatePagination();
+                }
+
+                // ------------ EVENT LISTENERS ------------
+
+                // Búsqueda en tiempo real
+                searchInput.addEventListener('input', () => {
+                    currentPage = 1;
+                    filterCards();
+                    updatePagination();
+                });
+
+                // Cambio en el número de elementos por página
+                itemsPerPageSelect.addEventListener('change', () => {
+                    rowsPerPage = parseInt(itemsPerPageSelect.value) || allCards.length;
+                    currentPage = 1;
+                    filterCards();
+                    updatePagination();
+                });
+
+                // Botón Página Anterior
+                document.getElementById('prevPage').addEventListener('click', () => {
+                    if(currentPage > 1) changePage(currentPage - 1);
+                });
+
+                // Botón Página Siguiente
+                document.getElementById('nextPage').addEventListener('click', () => {
+                    const totalPages = Math.ceil(filteredCards.length / rowsPerPage);
+                    if(currentPage < totalPages) changePage(currentPage + 1);
+                });
+
+                // ------------ INICIALIZACIÓN ------------
+                filterCards();  // Filtrado inicial
+                updatePagination();  // Paginación inicial
+                window.changePage = changePage;  // Hacer función accesible globalmente
             });
-        });
-    </script>
+        </script>
 }
