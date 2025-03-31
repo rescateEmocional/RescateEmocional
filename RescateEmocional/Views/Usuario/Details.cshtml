@@ -1,54 +1,91 @@
-﻿@model RescateEmocional.Models.Usuario
-
+﻿@model RescateEmocional.Models.Organizacion
+@* Define el modelo que se utilizará en esta vista: Organizacion del namespace RescateEmocional.Models *@
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles de Organización";
+    @* Establece el título de la vista en el ViewData para usarlo en la interfaz *@
 }
 
-<h1>Details</h1>
+<div class="container mt-5">
+    @* Contenedor principal de Bootstrap con un margen superior de 5 unidades *@
+    <div class="card shadow-lg border-primary">
+        @* Tarjeta estilizada con sombra grande y borde azul para resaltar la importancia *@
+        <div class="card-header bg-primary text-white">
+            @* Encabezado de la tarjeta con fondo azul y texto blanco para destacar el título *@
+            <h2 class="display-5 mb-0"><i class="bi bi-building me-2"></i>@ViewData["Title"]</h2>
+            @* Título con ícono de edificio y el valor de ViewData["Title"] *@
+        </div>
+        <div class="card-body">
+            @* Cuerpo de la tarjeta que contiene los detalles de la organización *@
+            <div class="row g-4">
+                @* Fila de Bootstrap con espaciado entre elementos *@
+                <div class="col-md-8 mx-auto">
+                    @* Columna centrada que ocupa 8 unidades en pantallas medianas para un diseño limpio *@
+                    <dl class="row border rounded-3 p-3 bg-light">
+                        @* Lista de definiciones con borde redondeado, relleno y fondo claro para mostrar detalles *@
+                        <div class="col-12 mb-4">
+                            @* Columna de ancho completo con margen inferior para el campo Nombre *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                            @* Etiqueta del campo Nombre en texto pequeño y apagado *@
+                            <dd class="h4 text-primary">@Html.DisplayFor(model => model.Nombre)</dd>
+                            @* Valor del campo Nombre en tamaño h4 y color azul para destacar *@
+                        </div>
 
-<div>
-    <h4>Usuario</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CorreoElectronico)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CorreoElectronico)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefono)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefono)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contrasena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contrasena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdrolNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdrolNavigation.Idrol)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Idusuario">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo Horario con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Horario)</dt>
+                            @* Etiqueta del campo Horario en texto pequeño y apagado *@
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.Horario)</dd>
+                            @* Valor del campo Horario en negrita para mayor énfasis *@
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo Ubicacion con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Ubicacion)</dt>
+                            @* Etiqueta del campo Ubicacion en texto pequeño y apagado *@
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.Ubicacion)</dd>
+                            @* Valor del campo Ubicacion en negrita para resaltarlo *@
+                        </div>
+
+                        <div class="col-12 mb-4">
+                            @* Columna de ancho completo para el campo Descripcion con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+                            @* Etiqueta del campo Descripcion en texto pequeño y apagado *@
+                            <dd class="fst-italic text-muted">@Html.DisplayFor(model => model.Descripcion)</dd>
+                            @* Valor del campo Descripcion en cursiva y color apagado para diferenciarlo *@
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo Estado con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Estado)</dt>
+                            @* Etiqueta del campo Estado en texto pequeño y apagado *@
+                            <dd class="badge bg-@(Model.Estado == 1 ? "success" : "secondary") fs-6">
+                                @(Model.Estado == 1 ? "Activo" : "Inactivo")
+                            </dd>
+                            @* Badge que muestra el estado con color condicional: verde para Activo, gris para Inactivo, y tamaño de fuente 6 *@
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo IdrolNavigation con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.IdrolNavigation)</dt>
+                            @* Etiqueta del campo IdrolNavigation en texto pequeño y apagado *@
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.IdrolNavigation.Idrol)</dd>
+                            @* Valor del campo IdrolNavigation en negrita para resaltarlo *@
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                @* Contenedor de botones alineados a la derecha con espacio entre ellos y margen superior *@
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    @* Botón de enlace para regresar al listado de organizaciones *@
+                    <i class="bi bi-arrow-left-circle me-2"></i>Volver al listado
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model?.Idorganizacion" class="btn btn-primary">
+                    @* Botón de enlace para editar la organización, pasando el ID como parámetro *@
+                    <i class="bi bi-pencil-square me-2"></i>Editar
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
