@@ -32,17 +32,17 @@ public class AccountController : Controller
         var organizacion = await _context.Organizacions
             .FirstOrDefaultAsync(o => o.CorreoElectronico == correoElectronico && o.Contrasena == contrasena);
 
-        if (usuario != null)   
+        if (usuario != null)
         {
-            return await Autenticar(usuario.Nombre, usuario.CorreoElectronico, usuario.Idrol);
+            return await Autenticar(usuario.Nombre, usuario.CorreoElectronico, usuario.Idrol, usuario.Idusuario);
         }
         else if (administrador != null)
         {
-            return await Autenticar(administrador.Nombre, administrador.CorreoElectronico, administrador.Idrol);
+            return await Autenticar(administrador.Nombre, administrador.CorreoElectronico, administrador.Idrol, administrador.Idadmin);
         }
         else if (organizacion != null)
         {
-            return await Autenticar(organizacion.Nombre, organizacion.CorreoElectronico, organizacion.Idrol);
+            return await Autenticar(organizacion.Nombre, organizacion.CorreoElectronico, organizacion.Idrol, organizacion.Idorganizacion);
         }
 
         ModelState.AddModelError("", "Correo o contraseña incorrectos");
@@ -50,13 +50,14 @@ public class AccountController : Controller
     }
 
     // Método para autenticar y asignar rol
-    private async Task<IActionResult> Autenticar(string nombre, string correo, int idRol)
+    private async Task<IActionResult> Autenticar(string nombre, string correo, int idRol, int idUsuario)
     {
         var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, nombre),
         new Claim(ClaimTypes.Email, correo),
-        new Claim(ClaimTypes.Role, idRol.ToString()) // Guardamos el rol
+        new Claim(ClaimTypes.Role, idRol.ToString()), // Guardamos el rol
+        new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString()) // Guardamos el id del usuario
     };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -69,7 +70,6 @@ public class AccountController : Controller
 
         return RedirectToAction("Index", "Home");
     }
-
 
     public async Task<IActionResult> Logout()
     {

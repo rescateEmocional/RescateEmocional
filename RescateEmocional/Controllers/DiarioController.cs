@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RescateEmocional.Models;
+using System.Security.Claims;
+
 
 namespace RescateEmocional.Controllers
 {
@@ -60,11 +62,26 @@ namespace RescateEmocional.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Verificar si el usuario está autenticado
+                if (User.Identity.IsAuthenticated)
+                {
+                    // Obtener el Id del usuario autenticado desde los claims
+                    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                    // Asignar el Idusuario al diario
+                    diario.Idusuario = userId;
+                }
+                else
+                {
+                    // Si no está autenticado, redirigir al login
+                    return RedirectToAction("Login", "Account");
+                }
+
+                // Agregar el diario a la base de datos
                 _context.Add(diario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Idusuario", diario.Idusuario);
             return View(diario);
         }
 
