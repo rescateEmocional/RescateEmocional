@@ -1,0 +1,43 @@
+﻿@model RescateEmocional.Models.Usuario
+
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<h2 class="text-center">Editar Perfil</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="EditarPerfil" method="post">
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label">Nombre</label>
+                <input asp-for="Nombre" class="form-control" required />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Telefono" class="control-label">Teléfono</label>
+                <input asp-for="Telefono" class="form-control" required />
+                <span asp-validation-for="Telefono" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Nueva Contraseña</label>
+                <input type="password" name="NuevaContrasena" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Confirmar Contraseña</label>
+                <input type="password" name="ConfirmarContrasena" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
