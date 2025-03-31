@@ -76,58 +76,58 @@
     <div class="row row-cols-1 row-cols-md-3 g-4" id="cardsContainer">
         @foreach (var item in Model)
         {
-            <!-- Carta individual -->
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <!-- Encabezado de la carta -->
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">
+                <!-- Carta individual -->
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <!-- Encabezado de la carta -->
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
                             @Html.DisplayFor(modelItem => item.Nombre)
-                            <span class="badge bg-@(item.Estado == 1 ? "success" : "secondary") float-end">
+                                <span class="badge bg-@(item.Estado == 1 ? "success" : "secondary") float-end">
                                 @(item.Estado == 1 ? "Activo" : "Inactivo")
-                            </span>
-                        </h5>
-                    </div>
+                                </span>
+                            </h5>
+                        </div>
 
-                    <!-- Cuerpo de la carta -->
-                    <div class="card-body">
-                        <dl class="mb-0">
-                            <dt>Descripción</dt>
-                            <dd class="text-truncate-2">@Html.DisplayFor(modelItem => item.Descripcion)</dd>
+                        <!-- Cuerpo de la carta -->
+                        <div class="card-body">
+                            <dl class="mb-0">
+                                <dt>Descripción</dt>
+                                <dd class="text-truncate-2">@Html.DisplayFor(modelItem => item.Descripcion)</dd>
 
-                            <dt class="mt-2">Horario</dt>
-                            <dd>@Html.DisplayFor(modelItem => item.Horario)</dd>
+                                <dt class="mt-2">Horario</dt>
+                                <dd>@Html.DisplayFor(modelItem => item.Horario)</dd>
 
-                            <dt class="mt-2">Ubicación</dt>
-                            <dd>@Html.DisplayFor(modelItem => item.Ubicacion)</dd>
+                                <dt class="mt-2">Ubicación</dt>
+                                <dd>@Html.DisplayFor(modelItem => item.Ubicacion)</dd>
 
-                            <dt class="mt-2">Rol</dt>
-                            <dd>@Html.DisplayFor(modelItem => item.IdrolNavigation.Idrol)</dd>
-                        </dl>
-                    </div>
+                                <dt class="mt-2">Rol</dt>
+                                <dd>@Html.DisplayFor(modelItem => item.IdrolNavigation.Idrol)</dd>
+                            </dl>
+                        </div>
 
-                    <!-- Pie de carta con acciones -->
-                    <div class="card-footer bg-transparent">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <!-- Botón Editar -->
-                            <a asp-action="Edit" asp-route-id="@item.Idorganizacion"
-                               class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i> Editar
-                            </a>
-                            <!-- Botón Detalles -->
-                            <a asp-action="Details" asp-route-id="@item.Idorganizacion"
-                               class="btn btn-sm btn-info">
-                                <i class="bi bi-eye"></i> Detalles
-                            </a>
-                            <!-- Botón Eliminar -->
-                            <a asp-action="Delete" asp-route-id="@item.Idorganizacion"
-                               class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </a>
+                        <!-- Pie de carta con acciones -->
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <!-- Botón Editar -->
+                                <a asp-action="Edit" asp-route-id="@item.Idorganizacion"
+                                   class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                <!-- Botón Detalles -->
+                                <a asp-action="Details" asp-route-id="@item.Idorganizacion"
+                                   class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> Detalles
+                                </a>
+                                <!-- Botón Eliminar -->
+                                <a asp-action="Delete" asp-route-id="@item.Idorganizacion"
+                                   class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
         }
     </div>
 
@@ -161,126 +161,126 @@
 </div>
 
 @section Scripts {
-    <script>
-        // Inicialización cuando el DOM está listo
-        document.addEventListener('DOMContentLoaded', function() {
-            // ------------ VARIABLES GLOBALES ------------
-            const searchInput = document.getElementById('searchInput');  // Campo de búsqueda
-            const itemsPerPageSelect = document.getElementById('itemsPerPage');  // Selector de elementos por página
-            const cardsContainer = document.getElementById('cardsContainer');  // Contenedor de cartas
-            const paginationControls = document.getElementById('paginationControls');  // Controles de paginación
-            const pageInfo = document.getElementById('pageInfo');  // Información de página
-            const allCards = Array.from(cardsContainer.querySelectorAll('.col'));  // Todas las cartas
-            let currentPage = 1;  // Página actual
-            let rowsPerPage = parseInt(itemsPerPageSelect.value);  // Elementos por página
-            let filteredCards = [];  // Cartas filtradas
+        <script>
+            // Inicialización cuando el DOM está listo
+            document.addEventListener('DOMContentLoaded', function() {
+                // ------------ VARIABLES GLOBALES ------------
+                const searchInput = document.getElementById('searchInput');  // Campo de búsqueda
+                const itemsPerPageSelect = document.getElementById('itemsPerPage');  // Selector de elementos por página
+                const cardsContainer = document.getElementById('cardsContainer');  // Contenedor de cartas
+                const paginationControls = document.getElementById('paginationControls');  // Controles de paginación
+                const pageInfo = document.getElementById('pageInfo');  // Información de página
+                const allCards = Array.from(cardsContainer.querySelectorAll('.col'));  // Todas las cartas
+                let currentPage = 1;  // Página actual
+                let rowsPerPage = parseInt(itemsPerPageSelect.value);  // Elementos por página
+                let filteredCards = [];  // Cartas filtradas
 
-            // ------------ FUNCIONES PRINCIPALES ------------
+                // ------------ FUNCIONES PRINCIPALES ------------
 
-            /** Filtra las cartas según el término de búsqueda */
-            function filterCards() {
-                const searchTerm = searchInput.value.toLowerCase();
-                filteredCards = allCards.filter(card => {
-                    return card.textContent.toLowerCase().includes(searchTerm);
-                });
-            }
-
-            /** Actualiza toda la lógica de paginación */
-            function updatePagination() {
-                const totalCards = filteredCards.length;
-                const totalPages = rowsPerPage > 0 ? Math.ceil(totalCards / rowsPerPage) : 1;
-
-                // Ajustar página actual si es necesario
-                if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-                if (totalPages === 0) currentPage = 1;
-
-                updatePaginationControls(totalPages);
-                updatePageInfo(totalCards);
-                updateVisibleCards();
-            }
-
-            /** Actualiza los controles de paginación */
-            function updatePaginationControls(totalPages) {
-                // Limpiar números de página existentes
-                const pageNumbers = paginationControls.querySelectorAll('.page-item:not(#prevPage):not(#nextPage)');
-                pageNumbers.forEach(item => item.remove());
-
-                // Generar nuevos números de página
-                const startPage = Math.max(1, currentPage - 2);
-                const endPage = Math.min(totalPages, currentPage + 2);
-
-                for(let i = startPage; i <= endPage; i++) {
-                    const pageItem = document.createElement('li');
-                    pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
-                    pageItem.innerHTML = `<button class="page-link" onclick="changePage(${i})">${i}</button>`;
-                    paginationControls.insertBefore(pageItem, document.querySelector('#nextPage'));
+                /** Filtra las cartas según el término de búsqueda */
+                function filterCards() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    filteredCards = allCards.filter(card => {
+                        return card.textContent.toLowerCase().includes(searchTerm);
+                    });
                 }
 
-                // Actualizar estado de los botones
-                document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
-                document.getElementById('nextPage').classList.toggle('disabled', currentPage >= totalPages);
-            }
+                /** Actualiza toda la lógica de paginación */
+                function updatePagination() {
+                    const totalCards = filteredCards.length;
+                    const totalPages = rowsPerPage > 0 ? Math.ceil(totalCards / rowsPerPage) : 1;
 
-            /** Actualiza la información de la página */
-            function updatePageInfo(totalCards) {
-                const start = rowsPerPage > 0 ? (currentPage - 1) * rowsPerPage + 1 : 1;
-                const end = rowsPerPage > 0 ? Math.min(currentPage * rowsPerPage, totalCards) : totalCards;
-                pageInfo.textContent = `Mostrando ${start} a ${end} de ${totalCards} organizaciones`;
-            }
+                    // Ajustar página actual si es necesario
+                    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+                    if (totalPages === 0) currentPage = 1;
 
-            /** Actualiza las cartas visibles */
-            function updateVisibleCards() {
-                // Ocultar todas las cartas
-                allCards.forEach(card => card.style.display = 'none');
+                    updatePaginationControls(totalPages);
+                    updatePageInfo(totalCards);
+                    updateVisibleCards();
+                }
 
-                // Mostrar solo las cartas del rango actual
-                const start = rowsPerPage > 0 ? (currentPage - 1) * rowsPerPage : 0;
-                const end = rowsPerPage > 0 ? start + rowsPerPage : filteredCards.length;
+                /** Actualiza los controles de paginación */
+                function updatePaginationControls(totalPages) {
+                    // Limpiar números de página existentes
+                    const pageNumbers = paginationControls.querySelectorAll('.page-item:not(#prevPage):not(#nextPage)');
+                    pageNumbers.forEach(item => item.remove());
 
-                filteredCards.slice(start, end).forEach(card => {
-                    card.style.display = 'block';
+                    // Generar nuevos números de página
+                    const startPage = Math.max(1, currentPage - 2);
+                    const endPage = Math.min(totalPages, currentPage + 2);
+
+                    for(let i = startPage; i <= endPage; i++) {
+                        const pageItem = document.createElement('li');
+                        pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                        pageItem.innerHTML = `<button class="page-link" onclick="changePage(${i})">${i}</button>`;
+                        paginationControls.insertBefore(pageItem, document.querySelector('#nextPage'));
+                    }
+
+                    // Actualizar estado de los botones
+                    document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
+                    document.getElementById('nextPage').classList.toggle('disabled', currentPage >= totalPages);
+                }
+
+                /** Actualiza la información de la página */
+                function updatePageInfo(totalCards) {
+                    const start = rowsPerPage > 0 ? (currentPage - 1) * rowsPerPage + 1 : 1;
+                    const end = rowsPerPage > 0 ? Math.min(currentPage * rowsPerPage, totalCards) : totalCards;
+                    pageInfo.textContent = `Mostrando ${start} a ${end} de ${totalCards} organizaciones`;
+                }
+
+                /** Actualiza las cartas visibles */
+                function updateVisibleCards() {
+                    // Ocultar todas las cartas
+                    allCards.forEach(card => card.style.display = 'none');
+
+                    // Mostrar solo las cartas del rango actual
+                    const start = rowsPerPage > 0 ? (currentPage - 1) * rowsPerPage : 0;
+                    const end = rowsPerPage > 0 ? start + rowsPerPage : filteredCards.length;
+
+                    filteredCards.slice(start, end).forEach(card => {
+                        card.style.display = 'block';
+                    });
+                }
+
+                /** Cambia a una página específica */
+                function changePage(newPage) {
+                    currentPage = newPage;
+                    filterCards();
+                    updatePagination();
+                }
+
+                // ------------ EVENT LISTENERS ------------
+
+                // Búsqueda en tiempo real
+                searchInput.addEventListener('input', () => {
+                    currentPage = 1;
+                    filterCards();
+                    updatePagination();
                 });
-            }
 
-            /** Cambia a una página específica */
-            function changePage(newPage) {
-                currentPage = newPage;
-                filterCards();
-                updatePagination();
-            }
+                // Cambio en el número de elementos por página
+                itemsPerPageSelect.addEventListener('change', () => {
+                    rowsPerPage = parseInt(itemsPerPageSelect.value) || allCards.length;
+                    currentPage = 1;
+                    filterCards();
+                    updatePagination();
+                });
 
-            // ------------ EVENT LISTENERS ------------
+                // Botón Página Anterior
+                document.getElementById('prevPage').addEventListener('click', () => {
+                    if(currentPage > 1) changePage(currentPage - 1);
+                });
 
-            // Búsqueda en tiempo real
-            searchInput.addEventListener('input', () => {
-                currentPage = 1;
-                filterCards();
-                updatePagination();
+                // Botón Página Siguiente
+                document.getElementById('nextPage').addEventListener('click', () => {
+                    const totalPages = Math.ceil(filteredCards.length / rowsPerPage);
+                    if(currentPage < totalPages) changePage(currentPage + 1);
+                });
+
+                // ------------ INICIALIZACIÓN ------------
+                filterCards();  // Filtrado inicial
+                updatePagination();  // Paginación inicial
+                window.changePage = changePage;  // Hacer función accesible globalmente
             });
-
-            // Cambio en el número de elementos por página
-            itemsPerPageSelect.addEventListener('change', () => {
-                rowsPerPage = parseInt(itemsPerPageSelect.value) || allCards.length;
-                currentPage = 1;
-                filterCards();
-                updatePagination();
-            });
-
-            // Botón Página Anterior
-            document.getElementById('prevPage').addEventListener('click', () => {
-                if(currentPage > 1) changePage(currentPage - 1);
-            });
-
-            // Botón Página Siguiente
-            document.getElementById('nextPage').addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredCards.length / rowsPerPage);
-                if(currentPage < totalPages) changePage(currentPage + 1);
-            });
-
-            // ------------ INICIALIZACIÓN ------------
-            filterCards();  // Filtrado inicial
-            updatePagination();  // Paginación inicial
-            window.changePage = changePage;  // Hacer función accesible globalmente
-        });
-    </script>
+        </script>
 }
