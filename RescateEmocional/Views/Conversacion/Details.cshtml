@@ -4,39 +4,116 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="messaging-details-container">
+    <div class="chat-header">
+        <h1>Detalles del Mensaje</h1>
+        <a asp-action="Index" class="back-btn">← Volver</a>
+    </div>
 
-<div>
-    <h4>Conversacion</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaInicio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaInicio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mensaje)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mensaje)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdorganizacionNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdorganizacionNavigation.Idorganizacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdusuarioNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdusuarioNavigation.Idusuario)
-        </dd>
-    </dl>
+    <div class="details-content">
+        <div class="message-card">
+            <div class="message-item">
+                <span class="label">Fecha:</span>
+                <span class="value">@Html.DisplayFor(model => model.FechaInicio)</span>
+            </div>
+            <div class="message-item">
+                <span class="label">Mensaje:</span>
+                <span class="value message-text">@Html.DisplayFor(model => model.Mensaje)</span>
+            </div>
+            <div class="message-item">
+                <span class="label">Organización:</span>
+                <span class="value">@Html.DisplayFor(model => model.IdorganizacionNavigation.Idorganizacion)</span>
+            </div>
+            <div class="message-item">
+                <span class="label">Usuario:</span>
+                <span class="value">@Html.DisplayFor(model => model.IdusuarioNavigation.Idusuario)</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a asp-action="Edit" asp-route-id="@Model?.Idconversacion" class="edit-btn">Editar</a>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Idconversacion">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .messaging-details-container {
+        max-width: 600px;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #075E54;
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .back-btn {
+        color: white;
+        text-decoration: none;
+        font-size: 1.1em;
+    }
+
+    .details-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .message-card {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .message-item {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .label {
+        color: #075E54;
+        font-weight: bold;
+        font-size: 1em;
+        margin-bottom: 5px;
+    }
+
+    .value {
+        color: #333;
+        font-size: 1em;
+    }
+
+    .message-text {
+        background: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        word-wrap: break-word;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .edit-btn {
+        background: #25D366;
+        color: white;
+        text-decoration: none;
+        padding: 10px 25px;
+        border-radius: 20px;
+        font-size: 1em;
+        transition: background 0.2s;
+    }
+
+        .edit-btn:hover {
+            background: #20bd5a;
+        }
+</style>

@@ -4,43 +4,155 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="messaging-create-container">
+    <div class="chat-header">
+        <h1>@(User.IsInRole("3") ? "Nuevo Mensaje" : "Responder")</h1>
+        <a asp-action="Index" class="back-btn">← Volver</a>
+    </div>
 
-<h4>Conversacion</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Idusuario" class="control-label"></label>
-                <select asp-for="Idusuario" class ="form-control" asp-items="ViewBag.Idusuario"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Idorganizacion" class="control-label"></label>
-                <select asp-for="Idorganizacion" class ="form-control" asp-items="ViewBag.Idorganizacion"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaInicio" class="control-label"></label>
-                <input asp-for="FechaInicio" class="form-control" />
+    <div class="create-form">
+        <form asp-action="Create" class="message-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger error-summary"></div>
+
+            @if (User.IsInRole("3")) // Usuarios seleccionan organización
+            {
+                <div class="form-field">
+                    <label asp-for="Idorganizacion" class="field-label">Organización</label>
+                    <select asp-for="Idorganizacion" class="form-input" asp-items="ViewBag.Idorganizacion">
+                        <option value="">Selecciona una organización</option>
+                    </select>
+                    <span asp-validation-for="Idorganizacion" class="text-danger"></span>
+                </div>
+                <!-- Campo oculto para Idusuario (para evitar que se envíe un valor incorrecto) -->
+                <input type="hidden" asp-for="Idusuario" value="0" />
+            }
+            else if (User.IsInRole("2")) // Organizaciones seleccionan usuario
+            {
+                <div class="form-field">
+                    <label asp-for="Idusuario" class="field-label">Usuario</label>
+                    <select asp-for="Idusuario" class="form-input" asp-items="ViewBag.Idusuario">
+                        <option value="">Selecciona un usuario</option>
+                    </select>
+                    <span asp-validation-for="Idusuario" class="text-danger"></span>
+                </div>
+                <!-- Campo oculto para Idorganizacion (para evitar que se envíe un valor incorrecto) -->
+                <input type="hidden" asp-for="Idorganizacion" value="0" />
+            }
+
+            <div class="form-field">
+                <label asp-for="FechaInicio" class="field-label">Fecha</label>
+                <input asp-for="FechaInicio" class="form-input" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
                 <span asp-validation-for="FechaInicio" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Mensaje" class="control-label"></label>
-                <input asp-for="Mensaje" class="form-control" />
+
+            <div class="form-field">
+                <label asp-for="Mensaje" class="field-label">Mensaje</label>
+                <input asp-for="Mensaje" class="form-input message-input" />
                 <span asp-validation-for="Mensaje" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="form-actions">
+                <input type="submit" value="Enviar" class="send-btn" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+
+<style>
+    .messaging-create-container {
+        max-width: 600px;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #075E54;
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .back-btn {
+        color: white;
+        text-decoration: none;
+        font-size: 1.1em;
+    }
+
+    .create-form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .message-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .field-label {
+        color: #075E54;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        font-size: 1em;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .message-input {
+        border-radius: 10px;
+    }
+
+    .text-danger {
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+
+    .error-summary {
+        background: #ffebee;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .send-btn {
+        background: #25D366;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 20px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+        .send-btn:hover {
+            background: #20bd5a;
+        }
+</style>

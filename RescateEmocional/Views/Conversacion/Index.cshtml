@@ -2,52 +2,202 @@
 
 @{
     ViewData["Title"] = "Index";
+    int authenticatedUserId = (int)ViewData["AuthenticatedUserId"];
+    int authenticatedOrgId = (int)ViewData["AuthenticatedOrgId"];
+    string userRole = ViewData["UserRole"]?.ToString() ?? "Desconocido";
+    string userName = ViewData["UserName"]?.ToString() ?? "No disponible";
 }
 
-<h1>Index</h1>
+<div class="messaging-container">
+    <div class="chat-header">
+        <h1>Conversación</h1>
+        <p>Usuario autenticado: @userName (UserID: @authenticatedUserId, OrgID: @authenticatedOrgId, Rol: @userRole)</p> <!-- Para depuración -->
+        @if (userRole == "Usuario") // Solo los usuarios pueden iniciar un nuevo mensaje
+        {
+            <a asp-action="Create" class="new-message-btn">+ Nuevo Mensaje</a>
+        }
+        else if (userRole == "Organizacion") // Las organizaciones pueden responder
+        {
+            <a asp-action="Create" class="new-message-btn">+ Responder</a>
+        }
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaInicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Mensaje)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdorganizacionNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdusuarioNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mensaje)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdorganizacionNavigation.Idorganizacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdusuarioNavigation.Idusuario)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Idconversacion">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Idconversacion">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Idconversacion">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="chat-window">
+        @foreach (var item in Model)
+        {
+            // Determinar si el mensaje es del usuario autenticado basándonos en el rol
+            bool isOwnMessage = false;
+            if (userRole == "Usuario")
+            {
+                // Si el usuario autenticado es un usuario (rol "3"), el mensaje es propio si Idusuario coincide con authenticatedUserId
+                isOwnMessage = item.Idusuario == authenticatedUserId;
+            }
+            else if (userRole == "Organizacion")
+            {
+                // Si el usuario autenticado es una organización (rol "2"), el mensaje es propio si Idorganizacion coincide con authenticatedOrgId
+                isOwnMessage = item.Idorganizacion == authenticatedOrgId;
+            }
+
+            // Determinar si el mensaje es de un usuario o de una organización para mostrar el ID correcto
+            bool isUserMessage = userRole == "Usuario" ? isOwnMessage : !isOwnMessage;
+
+            <div class="message @(isOwnMessage ? "user-message" : "org-message")">
+                <div class="message-content">
+                    <div class="message-text">
+                        @Html.DisplayFor(modelItem => item.Mensaje)
+                    </div>
+                    <div class="message-info">
+                        <span class="sender">
+                            @(isUserMessage ? "Usuario: " + Html.DisplayFor(modelItem => item.Idusuario) : "Org: " + Html.DisplayFor(modelItem => item.Idorganizacion))
+                        </span>
+                        <span class="timestamp">
+                            @Html.DisplayFor(modelItem => item.FechaInicio)
+                        </span>
+                    </div>
+                    <div class="message-actions">
+                        @if (userRole == "Usuario" && isOwnMessage) // Solo usuarios pueden editar/eliminar sus mensajes
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Idconversacion" class="action-btn edit">Editar</a>
+                            <a asp-action="Delete" asp-route-id="@item.Idconversacion" class="action-btn delete">Eliminar</a>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.Idconversacion" class="action-btn details">Ver</a>
+                    </div>
+                    <!-- Información de depuración -->
+                    <div class="debug-info">
+                        <small>Idusuario: @item.Idusuario, Idorganizacion: @item.Idorganizacion, isOwnMessage: @isOwnMessage, UserRole: @userRole</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .messaging-container {
+        max-width: 800px;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #075E54;
+        color: white;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .new-message-btn {
+        background: #128C7E;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        text-decoration: none;
+    }
+
+    .chat-window {
+        background: #ECE5DD;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        min-height: 400px;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .message {
+        margin-bottom: 15px;
+        max-width: 70%;
+    }
+
+    .user-message {
+        margin-right: auto;
+        text-align: left;
+    }
+
+    .org-message {
+        margin-left: auto;
+        text-align: right;
+    }
+
+    .message-content {
+        display: inline-block;
+        padding: 10px;
+        border-radius: 10px;
+        background: white;
+    }
+
+    .user-message .message-content {
+        background: #FFFFFF; /* Blanco para mensajes del usuario */
+    }
+
+    .org-message .message-content {
+        background: #DCF8C6; /* Verde claro para mensajes de la organización */
+    }
+
+    .message-text {
+        color: #333;
+        word-wrap: break-word;
+    }
+
+    .message-info {
+        margin-top: 5px;
+        font-size: 0.8em;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sender {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .timestamp {
+        color: #999;
+    }
+
+    .message-actions {
+        margin-top: 5px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .user-message .message-actions {
+        justify-content: flex-start;
+    }
+
+    .org-message .message-actions {
+        justify-content: flex-end;
+    }
+
+    .action-btn {
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.9em;
+    }
+
+    .edit {
+        background: #25D366;
+        color: white;
+    }
+
+    .details {
+        background: #34B7F1;
+        color: white;
+    }
+
+    .delete {
+        background: #EE5555;
+        color: white;
+    }
+
+    .debug-info {
+        margin-top: 5px;
+        font-size: 0.7em;
+        color: #888;
+    }
+</style>

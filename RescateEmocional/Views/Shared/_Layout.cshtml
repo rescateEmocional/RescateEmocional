@@ -34,7 +34,7 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Administrador" asp-action="Index">Administradores</a>
                                 </li>
                             }
-                            @if (User.IsInRole("2")) // Organizacion 
+                            @if (User.IsInRole("3")) // Organizacion 
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Organizacion" asp-action="Index">Organizaciones</a>
@@ -45,10 +45,12 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Conversacion" asp-action="Index">Conversaciones</a>
                                 </li>
+                            }
+                            @if (User.IsInRole("2")) // Organizacion
+                            {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Organizaciones">Organizaciones</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Conversacion" asp-action="Index">Conversaciones</a>
                                 </li>
-
                             }
                         }
                     </ul>
@@ -88,10 +90,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
