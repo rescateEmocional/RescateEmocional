@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
-    int authenticatedUserId = (int)ViewData["AuthenticatedUserId"];
-    int authenticatedOrgId = (int)ViewData["AuthenticatedOrgId"];
+    int authenticatedUserId = ViewData["AuthenticatedUserId"] != null ? (int)ViewData["AuthenticatedUserId"] : 0;
+    int authenticatedOrgId = ViewData["AuthenticatedOrgId"] != null ? (int)ViewData["AuthenticatedOrgId"] : 0;
     string userRole = ViewData["UserRole"]?.ToString() ?? "Desconocido";
     string userName = ViewData["UserName"]?.ToString() ?? "No disponible";
 }
@@ -11,63 +11,63 @@
 <div class="messaging-container">
     <div class="chat-header">
         <h1>Conversación</h1>
-        <p>Usuario autenticado: @userName (UserID: @authenticatedUserId, OrgID: @authenticatedOrgId, Rol: @userRole)</p> <!-- Para depuración -->
-        @if (userRole == "Usuario") // Solo los usuarios pueden iniciar un nuevo mensaje
+        <p>Usuario autenticado: @userName (UserID: @authenticatedUserId, OrgID: @authenticatedOrgId, Rol: @userRole)</p>
+        @if (userRole == "Usuario")
         {
             <a asp-action="Create" class="new-message-btn">+ Nuevo Mensaje</a>
         }
-        else if (userRole == "Organizacion") // Las organizaciones pueden responder
+        else if (userRole == "Organizacion")
         {
             <a asp-action="Create" class="new-message-btn">+ Responder</a>
         }
     </div>
 
     <div class="chat-window">
-        @foreach (var item in Model)
+        @if (Model != null && Model.Any())
         {
-            // Determinar si el mensaje es del usuario autenticado basándonos en el rol
-            bool isOwnMessage = false;
-            if (userRole == "Usuario")
+            @foreach (var item in Model)
             {
-                // Si el usuario autenticado es un usuario (rol "3"), el mensaje es propio si Idusuario coincide con authenticatedUserId
-                isOwnMessage = item.Idusuario == authenticatedUserId;
-            }
-            else if (userRole == "Organizacion")
-            {
-                // Si el usuario autenticado es una organización (rol "2"), el mensaje es propio si Idorganizacion coincide con authenticatedOrgId
-                isOwnMessage = item.Idorganizacion == authenticatedOrgId;
-            }
+                // Determinar si el mensaje fue enviado por un usuario o una organización
+                // Si Idusuario coincide con authenticatedUserId y el rol es "Usuario", o si Idorganizacion es 0, es un mensaje de usuario
+                bool isUserMessage = (item.Idusuario == authenticatedUserId && userRole == "Usuario") || item.Idorganizacion == 0;
+                // Si Idorganizacion coincide con authenticatedOrgId y el rol es "Organizacion", o si Idusuario es 0, es un mensaje de organización
+                bool isOrgMessage = (item.Idorganizacion == authenticatedOrgId && userRole == "Organizacion") || item.Idusuario == 0;
 
-            // Determinar si el mensaje es de un usuario o de una organización para mostrar el ID correcto
-            bool isUserMessage = userRole == "Usuario" ? isOwnMessage : !isOwnMessage;
+                // Determinar la clase CSS según quién envió el mensaje
+                string messageClass = isUserMessage ? "user-message" : "org-message";
 
-            <div class="message @(isOwnMessage ? "user-message" : "org-message")">
-                <div class="message-content">
-                    <div class="message-text">
-                        @Html.DisplayFor(modelItem => item.Mensaje)
-                    </div>
-                    <div class="message-info">
-                        <span class="sender">
-                            @(isUserMessage ? "Usuario: " + Html.DisplayFor(modelItem => item.Idusuario) : "Org: " + Html.DisplayFor(modelItem => item.Idorganizacion))
-                        </span>
-                        <span class="timestamp">
-                            @Html.DisplayFor(modelItem => item.FechaInicio)
-                        </span>
-                    </div>
-                    <div class="message-actions">
-                        @if (userRole == "Usuario" && isOwnMessage) // Solo usuarios pueden editar/eliminar sus mensajes
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Idconversacion" class="action-btn edit">Editar</a>
-                            <a asp-action="Delete" asp-route-id="@item.Idconversacion" class="action-btn delete">Eliminar</a>
-                        }
-                        <a asp-action="Details" asp-route-id="@item.Idconversacion" class="action-btn details">Ver</a>
-                    </div>
-                    <!-- Información de depuración -->
-                    <div class="debug-info">
-                        <small>Idusuario: @item.Idusuario, Idorganizacion: @item.Idorganizacion, isOwnMessage: @isOwnMessage, UserRole: @userRole</small>
+                <div class="message @messageClass">
+                    <div class="message-content">
+                        <div class="message-text">
+                            @Html.DisplayFor(modelItem => item.Mensaje)
+                        </div>
+                        <div class="message-info">
+                            <span class="sender">
+                                @(isUserMessage ? "Usuario: " + Html.DisplayFor(modelItem => item.IdusuarioNavigation.Nombre) : "Org: " + Html.DisplayFor(modelItem => item.IdorganizacionNavigation.Nombre))
+                            </span>
+                            <span class="timestamp">
+                                @Html.DisplayFor(modelItem => item.FechaInicio)
+                            </span>
+                        </div>
+                        <div class="message-actions">
+                            @if (userRole == "Usuario" && item.Idusuario == authenticatedUserId)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Idconversacion" class="action-btn edit">Editar</a>
+                                <a asp-action="Delete" asp-route-id="@item.Idconversacion" class="action-btn delete">Eliminar</a>
+                            }
+                            <a asp-action="Details" asp-route-id="@item.Idconversacion" class="action-btn details">Ver</a>
+                        </div>
+                        <!-- Información de depuración -->
+                        <div class="debug-info">
+                            <small>Idusuario: @item.Idusuario, Idorganizacion: @item.Idorganizacion, isUserMessage: @isUserMessage, isOrgMessage: @isOrgMessage, UserRole: @userRole</small>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+        }
+        else
+        {
+            <p>No hay conversaciones disponibles.</p>
         }
     </div>
 </div>
@@ -113,13 +113,13 @@
     }
 
     .user-message {
-        margin-right: auto;
-        text-align: left;
+        margin-left: auto;
+        text-align: right;
     }
 
     .org-message {
-        margin-left: auto;
-        text-align: right;
+        margin-right: auto;
+        text-align: left;
     }
 
     .message-content {
@@ -130,11 +130,11 @@
     }
 
     .user-message .message-content {
-        background: #FFFFFF; /* Blanco para mensajes del usuario */
+        background: #DCF8C6; /* Verde claro para mensajes de usuarios */
     }
 
     .org-message .message-content {
-        background: #DCF8C6; /* Verde claro para mensajes de la organización */
+        background: #FFFFFF; /* Blanco para mensajes de organizaciones */
     }
 
     .message-text {
@@ -166,11 +166,11 @@
     }
 
     .user-message .message-actions {
-        justify-content: flex-start;
+        justify-content: flex-end;
     }
 
     .org-message .message-actions {
-        justify-content: flex-end;
+        justify-content: flex-start;
     }
 
     .action-btn {
