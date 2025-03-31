@@ -23,9 +23,18 @@ namespace RescateEmocional.Controllers
         // GET: Diario
         public async Task<IActionResult> Index()
         {
-            var rescateEmocionalContext = _context.Diarios.Include(d => d.IdusuarioNavigation);
+            // Obtener el Id del usuario autenticado
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            // Filtrar los diarios del usuario autenticado
+            var rescateEmocionalContext = _context.Diarios
+                .Where(d => d.Idusuario == userId) // Filtra por el Idusuario del usuario autenticado
+                .Include(d => d.IdusuarioNavigation);
+
+            // Retorna la vista con los diarios filtrados
             return View(await rescateEmocionalContext.ToListAsync());
         }
+
 
         // GET: Diario/Details/5
         public async Task<IActionResult> Details(int? id)
