@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RescateEmocional.Models;
-
-public partial class Conversacion
+namespace RescateEmocional.Models
 {
-    public int Idconversacion { get; set; }
+    public partial class Conversacion
+    {
+        public int Idconversacion { get; set; }
 
-    public int Idusuario { get; set; }
+        public int Idusuario { get; set; }
 
-    public int Idorganizacion { get; set; }
+        public int Idorganizacion { get; set; }
 
-    public DateTime FechaInicio { get; set; }
+        public DateTime FechaInicio { get; set; }
 
-    public string? Mensaje { get; set; }
+        public string? Mensaje { get; set; }
 
-    public virtual Organizacion? IdorganizacionNavigation { get; set; } = null!;
+        public virtual Organizacion? IdorganizacionNavigation { get; set; }
 
-    public virtual Usuario? IdusuarioNavigation { get; set; } = null!;
+        public virtual Usuario? IdusuarioNavigation { get; set; }
 
-    public virtual ICollection<Mensaje> Mensajes { get; set; } = new List<Mensaje>();
+        public virtual ICollection<Mensaje> Mensajes { get; set; } = new List<Mensaje>();
+    }
 }
