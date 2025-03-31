@@ -1,57 +1,104 @@
 ﻿@model RescateEmocional.Models.Organizacion
-
+@* Define el modelo que se utilizará en esta vista: Organizacion del namespace RescateEmocional.Models *@
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar Organización";
+    @* Establece el título de la vista en el ViewData para usarlo en la interfaz *@
 }
 
-<h1>Delete</h1>
+<div class="container mt-5">
+    @* Contenedor principal de Bootstrap con un margen superior de 5 unidades *@
+    <div class="card shadow-lg border-danger">
+        @* Tarjeta estilizada con sombra grande y borde rojo para indicar una acción crítica *@
+        <div class="card-header bg-danger text-white">
+            @* Encabezado de la tarjeta con fondo rojo y texto blanco para destacar la eliminación *@
+            <h2 class="display-5 mb-0"><i class="bi bi-exclamation-triangle me-2"></i>@ViewData["Title"]</h2>
+            @* Título con ícono de advertencia y el valor de ViewData["Title"] *@
+        </div>
+        <div class="card-body">
+            @* Cuerpo de la tarjeta que contiene la advertencia y los detalles de la organización *@
+            <div class="alert alert-danger" role="alert">
+                @* Alerta roja para resaltar la naturaleza irreversible de la acción *@
+                <h4 class="alert-heading"><i class="bi bi-exclamation-octagon-fill"></i> ¡Acción irreversible!</h4>
+                @* Encabezado de la alerta con ícono de exclamación para mayor impacto visual *@
+                <p class="mb-0">¿Estás seguro que deseas eliminar permanentemente esta organización?</p>
+                @* Mensaje de confirmación para que el usuario verifique su decisión *@
+            </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Organizacion</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Horario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Horario)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ubicacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ubicacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdrolNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdrolNavigation.Idrol)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Idorganizacion" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+            <div class="row g-4 mb-4">
+                @* Fila de Bootstrap con espaciado entre elementos y margen inferior de 4 unidades *@
+                <div class="col-md-8 mx-auto">
+                    @* Columna centrada que ocupa 8 unidades en pantallas medianas para un diseño limpio *@
+                    <dl class="row border rounded-3 p-3 bg-light">
+                        @* Lista de definiciones con borde redondeado, relleno y fondo claro para mostrar detalles *@
+                        <div class="col-12 mb-3">
+                            @* Columna de ancho completo con margen inferior para el campo Nombre *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                            @* Etiqueta del campo Nombre en texto pequeño y apagado *@
+                            <dd class="h5">@Html.DisplayFor(model => model.Nombre)</dd>
+                            @* Valor del campo Nombre mostrado en tamaño h5 para destacar *@
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo Horario con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Horario)</dt>
+                            @* Etiqueta del campo Horario en texto pequeño y apagado *@
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.Horario)</dd>
+                            @* Valor del campo Horario en negrita para mayor énfasis *@
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo Ubicacion con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Ubicacion)</dt>
+                            @* Etiqueta del campo Ubicacion en texto pequeño y apagado *@
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.Ubicacion)</dd>
+                            @* Valor del campo Ubicacion en negrita para resaltarlo *@
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            @* Columna de ancho completo para el campo Descripcion con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+                            @* Etiqueta del campo Descripcion en texto pequeño y apagado *@
+                            <dd class="fst-italic">@Html.DisplayFor(model => model.Descripcion)</dd>
+                            @* Valor del campo Descripcion en cursiva para diferenciarlo *@
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo Estado con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Estado)</dt>
+                            @* Etiqueta del campo Estado en texto pequeño y apagado *@
+                            <dd class="badge bg-@(Model.Estado == 1 ? "success" : "secondary")">
+                                @(Model.Estado == 1 ? "Activo" : "Inactivo")
+                            </dd>
+                            @* Badge que muestra el estado con color condicional: verde para Activo, gris para Inactivo *@
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            @* Columna de 6 unidades para el campo IdrolNavigation con margen inferior *@
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.IdrolNavigation)</dt>
+                            @* Etiqueta del campo IdrolNavigation en texto pequeño y apagado *@
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.IdrolNavigation.Idrol)</dd>
+                            @* Valor del campo IdrolNavigation en negrita para resaltarlo *@
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete">
+                @* Formulario que envía la solicitud de eliminación al controlador *@
+                <input type="hidden" asp-for="Idorganizacion" />
+                @* Campo oculto que contiene el ID de la organización a eliminar *@
+                <div class="d-flex justify-content-end gap-2">
+                    @* Contenedor de botones alineados a la derecha con espacio entre ellos *@
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        @* Botón de enlace para regresar al listado de organizaciones *@
+                        <i class="bi bi-arrow-left-circle me-2"></i>Volver al listado
+                    </a>
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        @* Botón de envío para confirmar la eliminación, con estilo grande y rojo *@
+                        <i class="bi bi-trash3 me-2"></i>Confirmar Eliminación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
