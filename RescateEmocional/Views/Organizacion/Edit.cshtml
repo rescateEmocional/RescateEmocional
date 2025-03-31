@@ -1,59 +1,132 @@
 ﻿@model RescateEmocional.Models.Organizacion
+@* Define el modelo que se utilizará en esta vista: Organizacion del namespace RescateEmocional.Models *@
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Organización";
+    @* Establece el título de la vista en el ViewData para usarlo en la interfaz *@
 }
 
-<h1>Edit</h1>
+<div class="container mt-5">
+    @* Contenedor principal de Bootstrap con un margen superior de 5 unidades *@
+    <div class="card shadow-lg border-primary">
+        @* Tarjeta estilizada con sombra grande y borde azul para resaltar la importancia *@
+        <div class="card-header bg-primary text-white">
+            @* Encabezado de la tarjeta con fondo azul y texto blanco para destacar el título *@
+            <h2 class="display-5 mb-0"><i class="bi bi-pencil-square me-2"></i>@ViewData["Title"]</h2>
+            @* Título con ícono de lápiz y el valor de ViewData["Title"] *@
+        </div>
+        <div class="card-body">
+            @* Cuerpo de la tarjeta que contiene el formulario de edición *@
+            <form asp-action="Edit" class="needs-validation" novalidate>
+                @* Formulario que se enviará a la acción Edit del controlador con validación de Bootstrap *@
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                @* Resumen de errores de validación en un alerta rojo *@
+                <input type="hidden" asp-for="Idorganizacion" />
+                @* Campo oculto que contiene el ID de la organización para identificar el registro a editar *@
 
-<h4>Organizacion</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Idorganizacion" />
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Horario" class="control-label"></label>
-                <input asp-for="Horario" class="form-control" />
-                <span asp-validation-for="Horario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ubicacion" class="control-label"></label>
-                <input asp-for="Ubicacion" class="form-control" />
-                <span asp-validation-for="Ubicacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Idrol" class="control-label"></label>
-                <select asp-for="Idrol" class="form-control" asp-items="ViewBag.Idrol"></select>
-                <span asp-validation-for="Idrol" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                <div class="row g-4">
+                    @* Fila de Bootstrap con espaciado entre columnas *@
+                    <div class="col-md-6">
+                        @* Columna de 6 unidades para el campo Nombre *@
+                        <div class="form-floating">
+                            <input asp-for="Nombre" class="form-control" placeholder=" " />
+                            @* Campo de entrada para Nombre con estilo de Bootstrap *@
+                            <label asp-for="Nombre" class="form-label"></label>
+                            @* Etiqueta flotante para Nombre *@
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                            @* Mensaje de validación para Nombre *@
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        @* Columna de 6 unidades para el campo Horario *@
+                        <div class="form-floating">
+                            <input asp-for="Horario" class="form-control" placeholder=" " />
+                            @* Campo de entrada para Horario con estilo de Bootstrap *@
+                            <label asp-for="Horario" class="form-label"></label>
+                            @* Etiqueta flotante para Horario *@
+                            <span asp-validation-for="Horario" class="text-danger small"></span>
+                            @* Mensaje de validación para Horario *@
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        @* Columna de ancho completo para el campo Descripcion *@
+                        <div class="form-floating">
+                            <textarea asp-for="Descripcion" class="form-control" placeholder=" " style="height: 100px"></textarea>
+                            @* Área de texto para Descripcion con altura de 100px *@
+                            <label asp-for="Descripcion" class="form-label"></label>
+                            @* Etiqueta flotante para Descripcion *@
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                            @* Mensaje de validación para Descripcion *@
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        @* Columna de 6 unidades para el campo Ubicacion *@
+                        <div class="form-floating">
+                            <input asp-for="Ubicacion" class="form-control" placeholder=" " />
+                            @* Campo de entrada para Ubicacion con estilo de Bootstrap *@
+                            <label asp-for="Ubicacion" class="form-label"></label>
+                            @* Etiqueta flotante para Ubicacion *@
+                            <span asp-validation-for="Ubicacion" class="text-danger small"></span>
+                            @* Mensaje de validación para Ubicacion *@
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        @* Columna de 6 unidades para el campo Estado *@
+                        <div class="form-floating">
+                            <select asp-for="Estado" class="form-select">
+                                @* Menú desplegable para seleccionar el estado (Activo/Inactivo) *@
+                                <option value="1" selected="@(Model.Estado == 1)">Activo</option>
+                                @* Opción Activo, seleccionada si el estado del modelo es 1 *@
+                                <option value="0" selected="@(Model.Estado == 0)">Inactivo</option>
+                                @* Opción Inactivo, seleccionada si el estado del modelo es 0 *@
+                            </select>
+                            <label asp-for="Estado" class="form-label"></label>
+                            @* Etiqueta flotante para Estado *@
+                            <span asp-validation-for="Estado" class="text-danger small"></span>
+                            @* Mensaje de validación para Estado *@
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        @* Columna de 6 unidades para el campo Idrol *@
+                        <div class="form-floating">
+                            <select asp-for="Idrol" class="form-select" asp-items="ViewBag.Idrol">
+                                @* Menú desplegable poblado con datos de ViewBag.Idrol *@
+                                <option value="">Seleccione un rol</option>
+                                @* Opción por defecto del select *@
+                            </select>
+                            <label asp-for="Idrol" class="form-label"></label>
+                            @* Etiqueta flotante para Idrol *@
+                            <span asp-validation-for="Idrol" class="text-danger small"></span>
+                            @* Mensaje de validación para Idrol *@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    @* Contenedor de botones con margen superior y alineación a los extremos *@
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        @* Botón de enlace para volver al listado *@
+                        <i class="bi bi-arrow-left-circle me-2"></i>Volver al listado
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        @* Botón de envío del formulario para guardar los cambios *@
+                        <i class="bi bi-save me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @* Sección para incluir scripts adicionales *@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        @* Incluye scripts de validación del lado del cliente *@
+    }
 }
