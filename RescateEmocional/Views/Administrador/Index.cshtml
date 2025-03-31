@@ -1,53 +1,102 @@
 ﻿@model IEnumerable<RescateEmocional.Models.Administrador>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Administradores";
 }
 
-<h1>Index</h1>
+<h1>Buscar Administradores</h1>
+<form asp-action="Index">
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group">
+                <label class="control-label">Nombre</label>
+                <input type="text" name="Nombre" class="form-control" />
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label class="control-label">Correo Electronico</label>
+                <input type="text" name="CorreoElectronico" class="form-control" />
+            </div>
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CorreoElectronico)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Contrasena)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdrolNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CorreoElectronico)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Contrasena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdrolNavigation.Idrol)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Idadmin">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Idadmin">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Idadmin">Delete</a>
-            </td>
-        </tr>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group">
+                <label class="control-label">Rol</label>
+                <select name="Idrol" class="form-control" asp-items="ViewBag.Idrol"></select>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label class="control-label">Cant. Registros</label>
+                <select name="topRegistro" class="form-control">
+                    <option selected value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="60">60</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                    <option value="1000">1000</option>
+                    <option value="0">Todos</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3 mb-2">
+        <div class="col-12">
+            <input type="submit" value="Buscar" class="btn btn-primary" />
+            <a class="btn btn-success" asp-action="Create">Ir a crear</a>
+        </div>
+    </div>
+</form>
+
+<!-- Contenedor para DataTables -->
+<div class="table-responsive">
+    <table id="tablaAdministradores" class="table table-borderless">
+        <thead style="display: none;">
+            <tr>
+                <th>Administradores</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="card border-info mb-3" style="width: 90%; max-width: 600px; margin: auto;">
+                            <div class="card-header text-center">
+                                <strong>@item.Nombre</strong>
+                            </div>
+                            <div class="card-body text-center">
+                                <p><strong>Correo:</strong> @item.CorreoElectronico</p>
+                                <p><strong>Contraseña:</strong> @item.Contrasena</p>
+                                <p><strong>Rol:</strong> @item.IdrolNavigation.Nombre</p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.Idadmin" class="btn btn-primary btn-sm">Editar</a>
+                                    <a asp-action="Details" asp-route-id="@item.Idadmin" class="btn btn-info btn-sm">Detalles</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Idadmin" class="btn btn-danger btn-sm">Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tablaAdministradores').DataTable({
+                "paging": true,
+                
+                
+                "language": languageTable
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
+
+

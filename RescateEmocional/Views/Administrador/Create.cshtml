@@ -1,45 +1,66 @@
 ﻿@model RescateEmocional.Models.Administrador
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear";
 }
 
-<h1>Create</h1>
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h2 class="display-5 mb-0"><i class="bi bi-person-badge me-2"></i>Crear administrador</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Nombre" class="form-control" placeholder=" " />
+                            <label asp-for="Nombre" class="form-label"></label>
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder=" " />
+                            <label asp-for="CorreoElectronico" class="form-label"></label>
+                            <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
+                        </div>
+                    </div>
 
-<h4>Administrador</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CorreoElectronico" class="control-label"></label>
-                <input asp-for="CorreoElectronico" class="form-control" />
-                <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Contrasena" class="control-label"></label>
-                <input asp-for="Contrasena" class="form-control" />
-                <span asp-validation-for="Contrasena" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Idrol" class="control-label"></label>
-                <select asp-for="Idrol" class ="form-control" asp-items="ViewBag.Idrol"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Contrasena" type="password" class="form-control" placeholder=" " />
+                            <label asp-for="Contrasena" class="form-label"></label>
+                            <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Idrol" class="form-select" asp-items="ViewBag.Idrol">
+                                <option value="">Seleccione un rol</option>
+                            </select>
+                            <label asp-for="Idrol" class="form-label"></label>
+                            <span asp-validation-for="Idrol" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left-circle me-2"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save me-2"></i>Guardar
+                    </button>
+                    
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

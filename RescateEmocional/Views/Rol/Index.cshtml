@@ -1,41 +1,26 @@
 ﻿@model IEnumerable<RescateEmocional.Models.Rol>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Rol";
 }
 
-<h1>Index</h1>
+<h1>Roles</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Ir a crear</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descripcion)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descripcion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Idrol">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Idrol">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Idrol">Delete</a>
-            </td>
-        </tr>
+
+@foreach (var item in Model)
+{
+    <div class="card border-info mb-3 d-flex justify-content-center" style="width: 90%;">
+        <div class="card-header">@Html.DisplayFor(modelItem => item.Nombre)</div>
+        <div class="card-body">
+            <h5 class="card-title">Descripción</h5>
+            <p class="card-text">@Html.DisplayFor(modelItem => item.Descripcion)</p>
+            <a asp-action="Edit" asp-route-id="@item.Idrol" class="btn btn-primary btn-sm">Editar</a>
+            <a asp-action="Details" asp-route-id="@item.Idrol" class="btn btn-info btn-sm">Detalles</a>
+            <a asp-action="Delete" asp-route-id="@item.Idrol" class="btn btn-danger btn-sm">Eliminar</a>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+

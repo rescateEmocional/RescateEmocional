@@ -1,45 +1,57 @@
 ﻿@model RescateEmocional.Models.Administrador
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar";
 }
 
-<h1>Delete</h1>
+<div class="container mt-5">
+    <div class="card shadow-lg border-danger">
+        <div class="card-header bg-danger text-white">
+            <h2 class="display-5 mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Eliminar administrador</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading"><i class="bi bi-exclamation-octagon-fill"></i> ¡Acción irreversible!</h4>
+                <p class="mb-0">¿Deseas eliminar permanentemente este administrador?</p>
+            </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Administrador</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CorreoElectronico)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CorreoElectronico)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contrasena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contrasena)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdrolNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdrolNavigation.Idrol)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Idadmin" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+            <div class="row g-4 mb-4">
+                <div class="col-md-8 mx-auto">
+                    <dl class="row border rounded-3 p-3 bg-light">
+                        <div class="col-12 mb-3">
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                            <dd class="h5">@Html.DisplayFor(model => model.Nombre)</dd>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.CorreoElectronico)</dt>
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.CorreoElectronico)</dd>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Contrasena)</dt>
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.Contrasena)</dd>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.IdrolNavigation)</dt>
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.IdrolNavigation.Nombre)</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Idadmin" />
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left-circle me-2"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-trash3 me-2"></i>Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
