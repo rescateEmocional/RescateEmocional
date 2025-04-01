@@ -31,7 +31,7 @@ namespace RescateEmocional.Controllers
             if (administrador.Idrol > 0)
                 query = query.Where(a => a.Idrol == administrador.Idrol);
 
-            query = query.OrderByDescending(administrador => administrador.Idadmin);
+            query = query.OrderByDescending(a => a.Idadmin);
 
             if (topRegistro > 0)
                 query = query.Take(topRegistro);
