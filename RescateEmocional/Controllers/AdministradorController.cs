@@ -113,35 +113,41 @@ namespace RescateEmocional.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Idadmin,Nombre,CorreoElectronico,Contrasena,Idrol")] Administrador administrador)
-        {
-            if (id != administrador.Idadmin)
-            {
-                return NotFound();
-            }
+{
+    if (id != administrador.Idadmin)
+    {
+        return NotFound();
+    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(administrador);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AdministradorExists(administrador.Idadmin))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", administrador.Idrol);
+    var adminUpdate = await _context.Administradors.FirstOrDefaultAsync(m => m.Idadmin == administrador.Idadmin);
+    if (adminUpdate == null)
+    {
+        return NotFound();
+    }
+
+    try
+    {
+        adminUpdate.Nombre = administrador.Nombre;
+        adminUpdate.CorreoElectronico = administrador.CorreoElectronico;
+        adminUpdate.Contrasena = CalcularHashMD5(administrador.Contrasena);
+        adminUpdate.Idrol = administrador.Idrol;
+
+        _context.Update(adminUpdate);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        if (!AdministradorExists(administrador.Idadmin))
+        {
+            return NotFound();
+        }
+        else
+        {
             return View(administrador);
         }
+    }
+}
 
         // GET: Administrador/Delete/5
         public async Task<IActionResult> Delete(int? id)
