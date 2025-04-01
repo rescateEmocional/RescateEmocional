@@ -47,16 +47,14 @@ namespace RescateEmocional.Controllers
         // GET: Organizacion/Create
         public IActionResult Create()
         {
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol");
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre"); // Mostrar el nombre del rol
             return View();
         }
 
         // POST: Organizacion/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol")] Organizacion organizacion)
+        public async Task<IActionResult> Create([Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol,CorreoElectronico,Contrasena")] Organizacion organizacion)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +62,7 @@ namespace RescateEmocional.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", organizacion.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", organizacion.Idrol);
             return View(organizacion);
         }
 
