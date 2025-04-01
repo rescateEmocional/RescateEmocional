@@ -79,16 +79,14 @@ namespace RescateEmocional.Controllers
             {
                 return NotFound();
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", organizacion.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", organizacion.Idrol);
             return View(organizacion);
         }
 
         // POST: Organizacion/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol")] Organizacion organizacion)
+        public async Task<IActionResult> Edit(int id, [Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol,CorreoElectronico,Contrasena")] Organizacion organizacion)
         {
             if (id != organizacion.Idorganizacion)
             {
@@ -115,10 +113,9 @@ namespace RescateEmocional.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", organizacion.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", organizacion.Idrol);
             return View(organizacion);
         }
-
         // GET: Organizacion/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

@@ -90,7 +90,21 @@
                             @* Mensaje de validación para Estado *@
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder=" " required />
+                            <label asp-for="CorreoElectronico" class="form-label"></label>
+                            <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
+                        </div>
+                    </div>
 
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Contrasena" type="password" class="form-control" placeholder=" " required />
+                            <label asp-for="Contrasena" class="form-label"></label>
+                            <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         @* Columna de 6 unidades para el campo Idrol *@
                         <div class="form-floating">
