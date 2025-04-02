@@ -1,61 +1,49 @@
 ﻿@model RescateEmocional.Models.Diario
 
 @{
-    ViewData["Title"] = "Editar";
+    ViewData["Title"] = "Edit";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg border-primary">
-        <div class="card-header bg-primary text-white">
-            <h2 class="display-5 mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Diario</h2>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit" class="needs-validation" novalidate>
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-                <input type="hidden" asp-for="Iddiario" />
+<h1>Edit</h1>
 
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Titulo" class="form-control" placeholder=" " />
-                            <label asp-for="Titulo" class="form-label"></label>
-                            <span asp-validation-for="Titulo" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="FechaCreacion" type="date" class="form-control" placeholder=" " />
-                            <label asp-for="FechaCreacion" class="form-label"></label>
-                            <span asp-validation-for="FechaCreacion" class="text-danger small"></span>
-                        </div>
-                    </div>
-
-                    <div class="col-md-12">
-                        <div class="form-floating">
-                            <textarea asp-for="Contenido" class="form-control" placeholder=" " style="height: 150px;"></textarea>
-                            <label asp-for="Contenido" class="form-label"></label>
-                            <span asp-validation-for="Contenido" class="text-danger small"></span>
-                        </div>
-                    </div>
-
-                    
-                </div>
-
-                <div class="mt-4 d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left-circle me-2"></i>Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-save me-2"></i>Guardar
-                    </button>
-                </div>
-            </form>
-        </div>
+<h4>Diario</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Iddiario" />
+            <div class="form-group">
+                <label asp-for="Idusuario" class="control-label"></label>
+                <select asp-for="Idusuario" class="form-control" asp-items="ViewBag.Idusuario"></select>
+                <span asp-validation-for="Idusuario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Titulo" class="control-label"></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Contenido" class="control-label"></label>
+                <input asp-for="Contenido" class="form-control" />
+                <span asp-validation-for="Contenido" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaCreacion" class="control-label"></label>
+                <input asp-for="FechaCreacion" class="form-control" />
+                <span asp-validation-for="FechaCreacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
 </div>
 
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

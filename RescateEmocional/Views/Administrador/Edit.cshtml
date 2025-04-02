@@ -31,7 +31,13 @@
                         </div>
                     </div>
 
-                    
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Contrasena" type="password" class="form-control" placeholder=" " />
+                            <label asp-for="Contrasena" class="form-label"></label>
+                            <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                        </div>
+                    </div>
 
                     <div class="col-md-6">
                         <div class="form-floating">
@@ -42,7 +48,6 @@
                             <span asp-validation-for="Idrol" class="text-danger small"></span>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="mt-4 d-flex justify-content-between">
