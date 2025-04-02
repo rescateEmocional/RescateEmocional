@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using RescateEmocional.Models;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,14 +25,16 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Login(string correoElectronico, string contrasena)
     {
+        string contrasenaEncriptada = ConvertirMD5(contrasena);
+
         var usuario = await _context.Usuarios
-            .FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico && u.Contrasena == contrasena);
+            .FirstOrDefaultAsync(u => u.CorreoElectronico == correoElectronico && u.Contrasena == contrasenaEncriptada);
 
         var administrador = await _context.Administradors
-            .FirstOrDefaultAsync(a => a.CorreoElectronico == correoElectronico && a.Contrasena == contrasena);
+            .FirstOrDefaultAsync(a => a.CorreoElectronico == correoElectronico && a.Contrasena == contrasenaEncriptada);
 
         var organizacion = await _context.Organizacions
-            .FirstOrDefaultAsync(o => o.CorreoElectronico == correoElectronico && o.Contrasena == contrasena);
+            .FirstOrDefaultAsync(o => o.CorreoElectronico == correoElectronico && o.Contrasena == contrasenaEncriptada);
 
         if (usuario != null)
         {
@@ -48,66 +52,54 @@ public class AccountController : Controller
         ModelState.AddModelError("", "Correo o contraseña incorrectos");
         return View();
     }
-    //LOGICA DE REGISTRO DE USUARIOS
-    // GET: Usuario/Register
+
     public IActionResult Register()
     {
-        // Cargar los roles para la vista (aunque no usaremos el rol en el formulario)
         ViewData["Roles"] = _context.Rols.ToList();
         return View();
     }
 
-    // POST: Usuario/Register
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register([Bind("Nombre,CorreoElectronico,Telefono,Contrasena,Idrol")] Usuario usuario)
     {
         if (ModelState.IsValid)
         {
-            // Verifica si ya existe un usuario con ese correo
             var existingUser = await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.CorreoElectronico == usuario.CorreoElectronico);
 
             if (existingUser != null)
             {
                 ModelState.AddModelError("CorreoElectronico", "El correo electrónico ya está registrado.");
-                ViewData["Roles"] = _context.Rols.ToList();  // Cargar los roles nuevamente
+                ViewData["Roles"] = _context.Rols.ToList();
                 return View(usuario);
             }
 
-            // Asignar el IDRol predeterminado a 3 para todos los usuarios
             usuario.Idrol = 3;
+            usuario.Contrasena = ConvertirMD5(usuario.Contrasena);
 
-            // Crear un nuevo usuario
             _context.Add(usuario);
             await _context.SaveChangesAsync();
 
-            // Redirige a la lista de usuarios (o a otro lugar según lo que necesites)
-            return RedirectToAction("Login", "account");
+            return RedirectToAction("Login", "Account");
         }
 
-        ViewData["Roles"] = _context.Rols.ToList();  // Cargar los roles nuevamente
+        ViewData["Roles"] = _context.Rols.ToList();
         return View(usuario);
     }
 
-
-
-    // Método para autenticar y asignar rol
     private async Task<IActionResult> Autenticar(string nombre, string correo, int idRol, int idUsuario)
     {
         var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.Name, nombre),
-        new Claim(ClaimTypes.Email, correo),
-        new Claim(ClaimTypes.Role, idRol.ToString()), // Guardamos el rol
-        new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString()) // Guardamos el id del usuario
-    };
+        {
+            new Claim(ClaimTypes.Name, nombre),
+            new Claim(ClaimTypes.Email, correo),
+            new Claim(ClaimTypes.Role, idRol.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString())
+        };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var authProperties = new AuthenticationProperties
-        {
-            IsPersistent = true
-        };
+        var authProperties = new AuthenticationProperties { IsPersistent = true };
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
@@ -118,5 +110,21 @@ public class AccountController : Controller
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
+    }
+
+    private string ConvertirMD5(string input)
+    {
+        using (MD5 md5 = MD5.Create())
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hashBytes.Length; i++)
+            {
+                sb.Append(hashBytes[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
     }
 }
