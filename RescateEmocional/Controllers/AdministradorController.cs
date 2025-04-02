@@ -13,6 +13,7 @@ using RescateEmocional.Models;
 namespace RescateEmocional.Controllers
 {
 
+    
     public class AdministradorController : Controller
     {
         private readonly RescateEmocionalContext _context;
@@ -70,7 +71,6 @@ namespace RescateEmocional.Controllers
         // GET: Administrador/Create
         public IActionResult Create()
         {
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre");
             return View();
         }
 
@@ -88,7 +88,6 @@ namespace RescateEmocional.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", administrador.Idrol);
             return View(administrador);
         }
 

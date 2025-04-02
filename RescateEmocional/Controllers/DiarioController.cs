@@ -107,7 +107,6 @@ namespace RescateEmocional.Controllers
             {
                 return NotFound();
             }
-            ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Idusuario", diario.Idusuario);
             return View(diario);
         }
 
@@ -116,9 +115,15 @@ namespace RescateEmocional.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Iddiario,Idusuario,Titulo,Contenido,FechaCreacion")] Diario diario)
+        public async Task<IActionResult> Edit(int id, [Bind("Iddiario,Titulo,Contenido,FechaCreacion")] Diario diario)
         {
             if (id != diario.Iddiario)
+            {
+                return NotFound();
+            }
+
+            var diarioUpdate = await _context.Diarios.FirstOrDefaultAsync(m => m.Iddiario == diario.Iddiario);
+            if (diarioUpdate == null)
             {
                 return NotFound();
             }
@@ -127,7 +132,11 @@ namespace RescateEmocional.Controllers
             {
                 try
                 {
-                    _context.Update(diario);
+                    diarioUpdate.Titulo = diario.Titulo;
+                    diarioUpdate.Contenido = diario.Contenido;
+                    diarioUpdate.FechaCreacion = diario.FechaCreacion;
+
+                    _context.Update(diarioUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -143,9 +152,9 @@ namespace RescateEmocional.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Idusuario", diario.Idusuario);
-            return View(diario);
+            return View(diarioUpdate);
         }
+
 
         // GET: Diario/Delete/5
         public async Task<IActionResult> Delete(int? id)
