@@ -48,48 +48,50 @@
     </form>
 </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Titulo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Contenido)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaCreacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdusuarioNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Contenido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaCreacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdusuarioNavigation.Idusuario)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Iddiario">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Iddiario">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Iddiario">Delete</a>
-            </td>
-        </tr>
+
+<!-- Contenedor para DataTables -->
+<div class="table-responsive mt-4">
+    <table id="tablaAdministradores" class="table table-borderless">
+        <thead style="display: none;">
+            <tr>
+                <th>Administradores</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="card border-info mb-3" style="width: 90%; max-width: 600px; margin: auto;">
+                            <div class="card-header text-center bg-info text-white">
+                                <strong><i class="fas fa-user-shield"></i> @item.Titulo</strong>
+                            </div>
+                            <div class="card-body text-center">
+                                <p><strong><i class="fas fa-envelope"></i> Fecha de creacion:</strong> @item.FechaCreacion</p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.Iddiario" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                                    <a asp-action="Details" asp-route-id="@item.Iddiario" class="btn btn-info btn-sm"><i class="fas fa-info-circle"></i> Detalles</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Iddiario" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tablaAdministradores').DataTable({
+                "paging": true, // Es lo que habilita la paginacion
+                "ordering": false, // Permite ordenar por columnas
+                "searching": false, // Oculta la barra de búsqueda
+                "lengthChange": false, // Oculta el "Mostrar X registros"
+                "language": languageTable
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
