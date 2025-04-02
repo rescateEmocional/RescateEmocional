@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace RescateEmocional.Models;
 
 public partial class Administrador
 {
+
     public int Idadmin { get; set; }
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     public string Nombre { get; set; } = null!;

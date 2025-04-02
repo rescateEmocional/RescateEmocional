@@ -41,8 +41,8 @@
 
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select asp-for="Idrol" class="form-select" asp-items="ViewBag.Idrol">
-                                <option value="">Seleccione un rol</option>
+                            <select asp-for="Idrol" class="form-select">
+                                <option value="1" selected>Administrador</option>
                             </select>
                             <label asp-for="Idrol" class="form-label"></label>
                             <span asp-validation-for="Idrol" class="text-danger small"></span>
