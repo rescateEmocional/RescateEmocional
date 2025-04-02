@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RescateEmocional.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace RescateEmocional.Controllers
 {
     public class UsuarioController : Controller
     {
         private readonly RescateEmocionalContext _context;
-
 
         public UsuarioController(RescateEmocionalContext context)
         {
@@ -38,6 +38,95 @@ namespace RescateEmocional.Controllers
             var organizaciones = await organizacionesQuery.ToListAsync();
             return View(organizaciones);
         }
+
+        // GET: Usuario/EditarPerfil
+        public async Task<IActionResult> EditarPerfil()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Obtener ID del usuario autenticado
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var usuario = await _context.Usuarios.FindAsync(int.Parse(userId));
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return View(usuario);
+        }
+
+        // POST: Usuario/EditarPerfil
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarPerfil(int id, string Nombre, string Telefono, string NuevaContrasena, string ConfirmarContrasena)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            // Actualizar nombre y teléfono
+            usuario.Nombre = Nombre;
+            usuario.Telefono = Telefono;
+
+            // Si el usuario ingresa una nueva contraseña, validar y actualizar
+            if (!string.IsNullOrEmpty(NuevaContrasena))
+            {
+                if (NuevaContrasena != ConfirmarContrasena)
+                {
+                    ModelState.AddModelError("", "Las contraseñas no coinciden.");
+                    return View(usuario);
+                }
+
+                // Hashear la nueva contraseña antes de guardarla
+                var passwordHasher = new PasswordHasher<Usuario>();
+                usuario.Contrasena = passwordHasher.HashPassword(usuario, NuevaContrasena);
+            }
+
+            try
+            {
+                _context.Update(usuario);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Perfil actualizado con éxito.";
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ModelState.AddModelError("", "Error al actualizar el perfil.");
+                return View(usuario);
+            }
+
+            return RedirectToAction("EditarPerfil");
+        }
+
+
+        //LOGICA DEL PERFIL
+        public async Task<IActionResult> Perfil()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Obtener ID del usuario autenticado
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var usuario = await _context.Usuarios
+                .Include(u => u.IdrolNavigation) // Para obtener el nombre del rol
+                .FirstOrDefaultAsync(u => u.Idusuario == int.Parse(userId));
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return View(usuario);
+        }
+
+
+
+
 
         // GET: Usuario
         public async Task<IActionResult> Index()
@@ -73,8 +162,6 @@ namespace RescateEmocional.Controllers
         }
 
         // POST: Usuario/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Idusuario,Nombre,CorreoElectronico,Telefono,Contrasena,Estado,Idrol")] Usuario usuario)
@@ -107,8 +194,6 @@ namespace RescateEmocional.Controllers
         }
 
         // POST: Usuario/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Idusuario,Nombre,CorreoElectronico,Telefono,Contrasena,Estado,Idrol")] Usuario usuario)

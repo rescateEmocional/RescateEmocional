@@ -36,6 +36,21 @@
         .btn-primary {
             width: 100%;
         }
+
+        .register-text {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+            .register-text a {
+                color: #764ba2;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+                .register-text a:hover {
+                    text-decoration: underline;
+                }
     </style>
 </head>
 <body>
@@ -52,12 +67,17 @@
             </div>
             <button type="submit" class="btn btn-primary">Ingresar</button>
         </form>
+
         @if (!ViewData.ModelState.IsValid)
         {
             <div class="alert alert-danger mt-3">
                 @Html.ValidationSummary()
             </div>
         }
+
+        <div class="register-text">
+            <p>¿No tienes cuenta? <a href="@Url.Action("Register", "Account")">Regístrate aquí</a></p>
+        </div>
     </div>
 </body>
 </html>

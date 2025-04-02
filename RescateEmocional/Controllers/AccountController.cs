@@ -48,6 +48,49 @@ public class AccountController : Controller
         ModelState.AddModelError("", "Correo o contraseña incorrectos");
         return View();
     }
+    //LOGICA DE REGISTRO DE USUARIOS
+    // GET: Usuario/Register
+    public IActionResult Register()
+    {
+        // Cargar los roles para la vista (aunque no usaremos el rol en el formulario)
+        ViewData["Roles"] = _context.Rols.ToList();
+        return View();
+    }
+
+    // POST: Usuario/Register
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register([Bind("Nombre,CorreoElectronico,Telefono,Contrasena,Idrol")] Usuario usuario)
+    {
+        if (ModelState.IsValid)
+        {
+            // Verifica si ya existe un usuario con ese correo
+            var existingUser = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.CorreoElectronico == usuario.CorreoElectronico);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("CorreoElectronico", "El correo electrónico ya está registrado.");
+                ViewData["Roles"] = _context.Rols.ToList();  // Cargar los roles nuevamente
+                return View(usuario);
+            }
+
+            // Asignar el IDRol predeterminado a 3 para todos los usuarios
+            usuario.Idrol = 3;
+
+            // Crear un nuevo usuario
+            _context.Add(usuario);
+            await _context.SaveChangesAsync();
+
+            // Redirige a la lista de usuarios (o a otro lugar según lo que necesites)
+            return RedirectToAction("Login", "account");
+        }
+
+        ViewData["Roles"] = _context.Rols.ToList();  // Cargar los roles nuevamente
+        return View(usuario);
+    }
+
+
 
     // Método para autenticar y asignar rol
     private async Task<IActionResult> Autenticar(string nombre, string correo, int idRol, int idUsuario)
@@ -68,7 +111,7 @@ public class AccountController : Controller
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Organizaciones", "Usuario");
     }
 
     public async Task<IActionResult> Logout()
