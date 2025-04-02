@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -29,7 +31,7 @@ namespace RescateEmocional.Controllers
             if (administrador.Idrol > 0)
                 query = query.Where(a => a.Idrol == administrador.Idrol);
 
-            query = query.OrderByDescending(administrador => administrador.Idadmin);
+            query = query.OrderByDescending(a => a.Idadmin);
 
             if (topRegistro > 0)
                 query = query.Take(topRegistro);
@@ -79,6 +81,7 @@ namespace RescateEmocional.Controllers
         {
             if (ModelState.IsValid)
             {
+                administrador.Contrasena = CalcularHashMD5(administrador.Contrasena);
                 _context.Add(administrador);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -110,35 +113,41 @@ namespace RescateEmocional.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Idadmin,Nombre,CorreoElectronico,Contrasena,Idrol")] Administrador administrador)
-        {
-            if (id != administrador.Idadmin)
-            {
-                return NotFound();
-            }
+{
+    if (id != administrador.Idadmin)
+    {
+        return NotFound();
+    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(administrador);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AdministradorExists(administrador.Idadmin))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", administrador.Idrol);
+    var adminUpdate = await _context.Administradors.FirstOrDefaultAsync(m => m.Idadmin == administrador.Idadmin);
+    if (adminUpdate == null)
+    {
+        return NotFound();
+    }
+
+    try
+    {
+        adminUpdate.Nombre = administrador.Nombre;
+        adminUpdate.CorreoElectronico = administrador.CorreoElectronico;
+        adminUpdate.Contrasena = CalcularHashMD5(administrador.Contrasena);
+        adminUpdate.Idrol = administrador.Idrol;
+
+        _context.Update(adminUpdate);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        if (!AdministradorExists(administrador.Idadmin))
+        {
+            return NotFound();
+        }
+        else
+        {
             return View(administrador);
         }
+    }
+}
 
         // GET: Administrador/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -177,6 +186,21 @@ namespace RescateEmocional.Controllers
         private bool AdministradorExists(int id)
         {
             return _context.Administradors.Any(e => e.Idadmin == id);
+        }
+        private string CalcularHashMD5(string input)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2")); // "x2" convierte el byte en una cadena hexadecimal de dos caracteres.
+                }
+                return sb.ToString();
+            }
         }
     }
 }

@@ -32,31 +32,72 @@ public class AccountController : Controller
         var organizacion = await _context.Organizacions
             .FirstOrDefaultAsync(o => o.CorreoElectronico == correoElectronico && o.Contrasena == contrasena);
 
-        if (usuario != null)   
+        if (usuario != null)
         {
-            return await Autenticar(usuario.Nombre, usuario.CorreoElectronico, usuario.Idrol);
+            return await Autenticar(usuario.Nombre, usuario.CorreoElectronico, usuario.Idrol, usuario.Idusuario);
         }
         else if (administrador != null)
         {
-            return await Autenticar(administrador.Nombre, administrador.CorreoElectronico, administrador.Idrol);
+            return await Autenticar(administrador.Nombre, administrador.CorreoElectronico, administrador.Idrol, administrador.Idadmin);
         }
         else if (organizacion != null)
         {
-            return await Autenticar(organizacion.Nombre, organizacion.CorreoElectronico, organizacion.Idrol);
+            return await Autenticar(organizacion.Nombre, organizacion.CorreoElectronico, organizacion.Idrol, organizacion.Idorganizacion);
         }
 
         ModelState.AddModelError("", "Correo o contraseña incorrectos");
         return View();
     }
+    //LOGICA DE REGISTRO DE USUARIOS
+    // GET: Usuario/Register
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    // POST: Usuario/Register
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register([Bind("Nombre,CorreoElectronico,Telefono,Contrasena")] Usuario usuario)
+    {
+        if (ModelState.IsValid)
+        {
+            // Verifica si ya existe un usuario con ese correo
+            var existingUser = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.CorreoElectronico == usuario.CorreoElectronico);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("CorreoElectronico", "El correo electrónico ya está registrado.");
+                return View(usuario);
+            }
+
+            // Asignar el IDRol predeterminado a 3 para todos los usuarios
+            usuario.Idrol = 3;
+
+            // Crear un nuevo usuario
+            _context.Add(usuario);
+            await _context.SaveChangesAsync();
+
+            // Redirige a la lista de usuarios (o a otro lugar según lo que necesites)
+            return RedirectToAction("Organizaciones", "Usuario");
+        }
+
+        return View(usuario);
+    }
+
+
+
 
     // Método para autenticar y asignar rol
-    private async Task<IActionResult> Autenticar(string nombre, string correo, int idRol)
+    private async Task<IActionResult> Autenticar(string nombre, string correo, int idRol, int idUsuario)
     {
         var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, nombre),
         new Claim(ClaimTypes.Email, correo),
-        new Claim(ClaimTypes.Role, idRol.ToString()) // Guardamos el rol
+        new Claim(ClaimTypes.Role, idRol.ToString()), // Guardamos el rol
+        new Claim(ClaimTypes.NameIdentifier, idUsuario.ToString()) // Guardamos el id del usuario
     };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -67,9 +108,8 @@ public class AccountController : Controller
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Organizaciones", "Usuario");
     }
-
 
     public async Task<IActionResult> Logout()
     {

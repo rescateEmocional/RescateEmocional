@@ -1,0 +1,26 @@
+﻿@model RescateEmocional.Models.Usuario
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<h2 class="text-center">Mi Perfil</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title text-center">@Model.Nombre</h4>
+                <hr />
+
+                <p><strong>Correo Electrónico:</strong> @Model.CorreoElectronico</p>
+                <p><strong>Teléfono:</strong> @Model.Telefono</p>
+                <p><strong>Rol:</strong> @Model.IdrolNavigation.Nombre</p>
+
+                <div class="text-center mt-4">
+                    <a asp-action="EditarPerfil" class="btn btn-primary">Editar Perfil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

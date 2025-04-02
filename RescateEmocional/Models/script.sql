@@ -1,4 +1,4 @@
--- Crear la base de datos
+ -- Crear la base de datos
 CREATE DATABASE RescateEmocional;
 GO
 

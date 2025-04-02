@@ -15,5 +15,5 @@ public partial class Diario
 
     public DateTime FechaCreacion { get; set; }
 
-    public virtual Usuario IdusuarioNavigation { get; set; } = null!;
+    public virtual Usuario? IdusuarioNavigation { get; set; } = null!;
 }

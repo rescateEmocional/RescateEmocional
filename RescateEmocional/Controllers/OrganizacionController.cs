@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -47,24 +49,23 @@ namespace RescateEmocional.Controllers
         // GET: Organizacion/Create
         public IActionResult Create()
         {
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol");
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre"); // Mostrar el nombre del rol
             return View();
         }
 
         // POST: Organizacion/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol")] Organizacion organizacion)
+        public async Task<IActionResult> Create([Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol,CorreoElectronico,Contrasena")] Organizacion organizacion)
         {
             if (ModelState.IsValid)
             {
+                organizacion.Contrasena = CalcularHashMD5(organizacion.Contrasena);
                 _context.Add(organizacion);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", organizacion.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", organizacion.Idrol);
             return View(organizacion);
         }
 
@@ -81,44 +82,52 @@ namespace RescateEmocional.Controllers
             {
                 return NotFound();
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", organizacion.Idrol);
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", organizacion.Idrol);
             return View(organizacion);
         }
 
         // POST: Organizacion/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol")] Organizacion organizacion)
+        public async Task<IActionResult> Edit(int id, [Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol,CorreoElectronico,Contrasena")] Organizacion organizacion)
         {
             if (id != organizacion.Idorganizacion)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var organizacionUpdate = await _context.Organizacions.FirstOrDefaultAsync(m => m.Idorganizacion == organizacion.Idorganizacion);
+            if (organizacionUpdate == null)
             {
-                try
-                {
-                    _context.Update(organizacion);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrganizacionExists(organizacion.Idorganizacion))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                return NotFound();
+            }
+
+            try
+            {
+                organizacionUpdate.Nombre = organizacion.Nombre;
+                organizacionUpdate.Descripcion = organizacion.Descripcion;
+                organizacionUpdate.Horario = organizacion.Horario;
+                organizacionUpdate.Ubicacion = organizacion.Ubicacion;
+                organizacionUpdate.Estado = organizacion.Estado;
+                organizacionUpdate.Idrol = organizacion.Idrol;
+                organizacionUpdate.CorreoElectronico = organizacion.CorreoElectronico;
+                organizacionUpdate.Contrasena = CalcularHashMD5(organizacion.Contrasena);
+
+                _context.Update(organizacionUpdate);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", organizacion.Idrol);
-            return View(organizacion);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OrganizacionExists(organizacion.Idorganizacion))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return View(organizacion);
+                }
+            }
         }
 
         // GET: Organizacion/Delete/5
@@ -158,6 +167,21 @@ namespace RescateEmocional.Controllers
         private bool OrganizacionExists(int id)
         {
             return _context.Organizacions.Any(e => e.Idorganizacion == id);
+        }
+        private string CalcularHashMD5(string input)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("x2")); // "x2" convierte el byte en una cadena hexadecimal de dos caracteres.
+                }
+                return sb.ToString();
+            }
         }
     }
 }
