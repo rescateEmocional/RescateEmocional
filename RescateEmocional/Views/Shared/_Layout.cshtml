@@ -168,14 +168,15 @@
                             }
                             @if (User.IsInRole("3")) // Usuario normal
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Conversacion" asp-action="Index">
-                                        <i class="bi bi-chat-left-text icon-nav"></i>Conversaciones
+
+                                                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Organizaciones">
+                                        <i class="bi bi-person icon-nav"></i>Organizaciones
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Usuario" asp-action="Organizaciones">
-                                        <i class="bi bi-person icon-nav"></i>Organizaciones
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Conversacion" asp-action="Index">
+                                        <i class="bi bi-chat-left-text icon-nav"></i>Conversaciones
                                     </a>
                                 </li>
                                 <li class="nav-item">

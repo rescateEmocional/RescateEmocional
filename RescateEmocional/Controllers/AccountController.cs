@@ -52,13 +52,15 @@ public class AccountController : Controller
     // GET: Usuario/Register
     public IActionResult Register()
     {
+        // Cargar los roles para la vista (aunque no usaremos el rol en el formulario)
+        ViewData["Roles"] = _context.Rols.ToList();
         return View();
     }
 
     // POST: Usuario/Register
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register([Bind("Nombre,CorreoElectronico,Telefono,Contrasena")] Usuario usuario)
+    public async Task<IActionResult> Register([Bind("Nombre,CorreoElectronico,Telefono,Contrasena,Idrol")] Usuario usuario)
     {
         if (ModelState.IsValid)
         {
@@ -69,6 +71,7 @@ public class AccountController : Controller
             if (existingUser != null)
             {
                 ModelState.AddModelError("CorreoElectronico", "El correo electrónico ya está registrado.");
+                ViewData["Roles"] = _context.Rols.ToList();  // Cargar los roles nuevamente
                 return View(usuario);
             }
 
@@ -80,12 +83,12 @@ public class AccountController : Controller
             await _context.SaveChangesAsync();
 
             // Redirige a la lista de usuarios (o a otro lugar según lo que necesites)
-            return RedirectToAction("Organizaciones", "Usuario");
+            return RedirectToAction("Login", "account");
         }
 
+        ViewData["Roles"] = _context.Rols.ToList();  // Cargar los roles nuevamente
         return View(usuario);
     }
-
 
 
 
