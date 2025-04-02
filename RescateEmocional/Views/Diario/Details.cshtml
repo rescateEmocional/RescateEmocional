@@ -1,42 +1,46 @@
 ﻿@model RescateEmocional.Models.Diario
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles";
 }
 
-<h1>Details</h1>
+<div class="container mt-5">
+    <div class="card shadow-lg border-primary">
+        <div class="card-header bg-primary text-white">
+            <h2 class="display-5 mb-0"><i class="bi bi-journal-text me-2"></i>Detalles del diario</h2>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-8 mx-auto">
+                    <dl class="row border rounded-3 p-3 bg-light">
 
-<div>
-    <h4>Diario</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Titulo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Titulo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contenido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contenido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaCreacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaCreacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdusuarioNavigation)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdusuarioNavigation.Idusuario)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Iddiario">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                        <div class="col-6 mb-3">
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Titulo)</dt>
+                            <dd class="h4 text-primary">@Html.DisplayFor(model => model.Titulo)</dd>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.FechaCreacion)</dt>
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.FechaCreacion)</dd>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <dt class="text-muted small">@Html.DisplayNameFor(model => model.Contenido)</dt>
+                            <dd class="fw-bold">@Html.DisplayFor(model => model.Contenido)</dd>
+                        </div>
+
+                    </dl>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left-circle me-2"></i>Cancelar
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model?.Iddiario" class="btn btn-primary">
+                    <i class="bi bi-pencil-square me-2"></i>Editar
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
