@@ -21,20 +21,42 @@ namespace RescateEmocional.Controllers
         }
 
         // GET: Diario
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+        //    // Obtener el Id del usuario autenticado
+        //    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+        //    // Filtrar los diarios del usuario autenticado
+        //    var rescateEmocionalContext = _context.Diarios
+        //        .Where(d => d.Idusuario == userId) // Filtra por el Idusuario del usuario autenticado
+        //        .Include(d => d.IdusuarioNavigation);
+
+        //    // Retorna la vista con los diarios filtrados
+        //    return View(await rescateEmocionalContext.ToListAsync());
+        //}
+        public async Task<IActionResult> Index(Diario diario, int topRegistro = 10)
         {
-            // Obtener el Id del usuario autenticado
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            // Filtrar los diarios del usuario autenticado
             var rescateEmocionalContext = _context.Diarios
                 .Where(d => d.Idusuario == userId) // Filtra por el Idusuario del usuario autenticado
                 .Include(d => d.IdusuarioNavigation);
 
-            // Retorna la vista con los diarios filtrados
-            return View(await rescateEmocionalContext.ToListAsync());
-        }
+            var query = _context.Diarios.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(diario.Titulo))
+                query = query.Where(a => a.Titulo.Contains(diario.Titulo));
+            if (!string.IsNullOrWhiteSpace(diario.Contenido))
+                query = query.Where(a => a.Contenido.Contains(diario.Contenido));
 
+            query = query.OrderByDescending(a => a.Iddiario);
+
+            if (topRegistro > 0)
+                query = query.Take(topRegistro);
+
+            var roles = _context.Rols.ToList();
+
+            return View(await query.ToListAsync());
+        }
 
         // GET: Diario/Details/5
         public async Task<IActionResult> Details(int? id)
