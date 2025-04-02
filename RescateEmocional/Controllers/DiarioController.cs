@@ -44,16 +44,14 @@ namespace RescateEmocional.Controllers
 
             var query = _context.Diarios.AsQueryable();
             if (!string.IsNullOrWhiteSpace(diario.Titulo))
-                query = query.Where(a => a.Titulo.Contains(diario.Titulo));
+                query = query.Where(d => d.Titulo.Contains(diario.Titulo));
             if (!string.IsNullOrWhiteSpace(diario.Contenido))
-                query = query.Where(a => a.Contenido.Contains(diario.Contenido));
+                query = query.Where(d => d.Contenido.Contains(diario.Contenido));
 
-            query = query.OrderByDescending(a => a.Iddiario);
+            query = query.OrderByDescending(d => d.Iddiario);
 
             if (topRegistro > 0)
                 query = query.Take(topRegistro);
-
-            var roles = _context.Rols.ToList();
 
             return View(await query.ToListAsync());
         }
