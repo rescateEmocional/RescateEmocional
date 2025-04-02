@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Create";
+    string userRole = ViewData["UserRole"]?.ToString() ?? "Desconocido";
+    int authenticatedUserId = ViewData["AuthenticatedUserId"] != null ? (int)ViewData["AuthenticatedUserId"] : 0;
+    int authenticatedOrgId = ViewData["AuthenticatedOrgId"] != null ? (int)ViewData["AuthenticatedOrgId"] : 0;
 }
 
 <div class="container mt-5">
@@ -15,21 +18,34 @@
             <form asp-action="Create" class="needs-validation" novalidate>
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
+                <!-- Seleccionar el usuario al que se enviará el mensaje -->
                 <div class="form-group mb-3">
-                    <label asp-for="Idusuario" class="form-label fw-bold"></label>
+                    <label asp-for="Idusuario" class="form-label fw-bold">Seleccionar Usuario</label>
                     <select asp-for="Idusuario" class="form-select" asp-items="ViewBag.Idusuario" required>
                         <option value="">Seleccione un usuario</option>
                     </select>
                     <div class="invalid-feedback">Por favor seleccione un usuario</div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Idorganizacion" class="form-label fw-bold"></label>
-                    <select asp-for="Idorganizacion" class="form-select" asp-items="ViewBag.Idorganizacion" required>
-                        <option value="">Seleccione una organización</option>
-                    </select>
-                    <div class="invalid-feedback">Por favor seleccione una organización</div>
-                </div>
+                <!-- Seleccionar la organización (solo si el usuario es un Usuario) -->
+                @if (userRole == "Usuario")
+                {
+                    <div class="form-group mb-3">
+                        <label asp-for="Idorganizacion" class="form-label fw-bold">Seleccionar Organización</label>
+                        <select asp-for="Idorganizacion" class="form-select" asp-items="ViewBag.Idorganizacion" required>
+                            <option value="">Seleccione una organización</option>
+                        </select>
+                        <div class="invalid-feedback">Por favor seleccione una organización</div>
+                    </div>
+
+                    <!-- Guardar automáticamente el ID del usuario autenticado -->
+                    <input type="hidden" asp-for="Idusuario" value="@authenticatedUserId" />
+                }
+                else if (userRole == "Organizacion")
+                {
+                    <!-- Guardar automáticamente el ID de la organización autenticada -->
+                    <input type="hidden" asp-for="Idorganizacion" value="@authenticatedOrgId" />
+                }
 
                 <div class="form-group mb-3">
                     <label asp-for="FechaInicio" class="form-label fw-bold"></label>
@@ -47,54 +63,12 @@
 
                 <div class="d-flex justify-content-between align-items-center">
                     <a asp-action="Index" class="btn btn-outline-secondary">Volver a la lista</a>
-                    <input type="submit" value="Crear" class="btn btn-primary px-4" />
+                    <input type="submit" value="Enviar" class="btn btn-primary px-4" />
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<style>
-    .container {
-        max-width: 600px;
-    }
-
-    .card {
-        border: none;
-        border-radius: 10px;
-    }
-
-    .card-body {
-        padding: 2rem;
-    }
-
-    .form-label {
-        color: #333;
-    }
-
-    .form-control, .form-select {
-        border-radius: 5px;
-        padding: 0.5rem 1rem;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border: none;
-        transition: background-color 0.3s;
-    }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-    .btn-outline-secondary {
-        border-radius: 5px;
-    }
-
-    .text-danger {
-        font-size: 0.875rem;
-    }
-</style>
 
 @section Scripts {
     @{

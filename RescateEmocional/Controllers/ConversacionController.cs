@@ -146,81 +146,41 @@ namespace RescateEmocional.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Idorganizacion,Idusuario,FechaInicio,Mensaje")] Conversacion conversacion)
+        public async Task<IActionResult> Create([Bind("Idorganizacion,Mensaje")] Conversacion conversacion)
         {
-            var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-            System.Diagnostics.Debug.WriteLine("Claims: " + string.Join(", ", claims.Select(c => $"{c.Type}: {c.Value}")));
-            System.Diagnostics.Debug.WriteLine($"Valores del formulario - Idusuario: {conversacion.Idusuario}, Idorganizacion: {conversacion.Idorganizacion}, FechaInicio: {conversacion.FechaInicio}, Mensaje: {conversacion.Mensaje}");
+            string userName = User.FindFirstValue(ClaimTypes.Name);
 
-            if (ModelState.IsValid)
+            if (string.IsNullOrEmpty(userName))
             {
-                string userName = User.FindFirstValue(ClaimTypes.Name);
-                if (string.IsNullOrEmpty(userName))
-                {
-                    ModelState.AddModelError("", "No se pudo obtener el identificador del usuario autenticado.");
-                    if (User.IsInRole("3"))
-                    {
-                        ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Nombre", conversacion.Idorganizacion);
-                    }
-                    else if (User.IsInRole("2"))
-                    {
-                        ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Nombre", conversacion.Idusuario);
-                    }
-                    return View(conversacion);
-                }
-
-                if (User.IsInRole("3")) // Usuario enviando mensaje
-                {
-                    var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Nombre == userName);
-                    if (usuario == null)
-                    {
-                        ModelState.AddModelError("", "No se encontró el usuario autenticado en la base de datos.");
-                        ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Nombre", conversacion.Idorganizacion);
-                        return View(conversacion);
-                    }
-                    conversacion.Idusuario = usuario.Idusuario;
-                    if (conversacion.Idorganizacion <= 0)
-                    {
-                        ModelState.AddModelError("Idorganizacion", "Debe seleccionar una organización.");
-                        ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Nombre", conversacion.Idorganizacion);
-                        return View(conversacion);
-                    }
-                }
-                else if (User.IsInRole("2")) // Organización respondiendo
-                {
-                    var organizacion = await _context.Organizacions.FirstOrDefaultAsync(o => o.Nombre == userName);
-                    if (organizacion == null)
-                    {
-                        ModelState.AddModelError("", "No se encontró la organización autenticada en la base de datos.");
-                        ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Nombre", conversacion.Idusuario);
-                        return View(conversacion);
-                    }
-                    conversacion.Idorganizacion = organizacion.Idorganizacion;
-                    if (conversacion.Idusuario <= 0)
-                    {
-                        ModelState.AddModelError("Idusuario", "Debe seleccionar un usuario.");
-                        ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Nombre", conversacion.Idusuario);
-                        return View(conversacion);
-                    }
-                }
-
-                System.Diagnostics.Debug.WriteLine($"Valores finales - Idusuario: {conversacion.Idusuario}, Idorganizacion: {conversacion.Idorganizacion}, FechaInicio: {conversacion.FechaInicio}, Mensaje: {conversacion.Mensaje}");
-
-                _context.Add(conversacion);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "No se pudo obtener el usuario autenticado.");
+                return View(conversacion);
             }
 
-            if (User.IsInRole("3"))
+            // Obtener el usuario autenticado
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Nombre == userName);
+            if (usuario == null)
             {
-                ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Nombre", conversacion.Idorganizacion);
+                ModelState.AddModelError("", "No se encontró el usuario autenticado.");
+                return View(conversacion);
             }
-            else if (User.IsInRole("2"))
+
+            conversacion.Idusuario = usuario.Idusuario;
+
+            if (conversacion.Idorganizacion <= 0)
             {
-                ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Nombre", conversacion.Idusuario);
+                ModelState.AddModelError("Idorganizacion", "Debe seleccionar una organización.");
+                return View(conversacion);
             }
-            return View(conversacion);
+
+            conversacion.Emisor = "Usuario"; // Siempre el usuario inicia la conversación
+            conversacion.FechaInicio = DateTime.Now;
+
+            _context.Add(conversacion);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+
+
 
         // GET: Conversacion/Edit/5
         public async Task<IActionResult> Edit(int? id)
