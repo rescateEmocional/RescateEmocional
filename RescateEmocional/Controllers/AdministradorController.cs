@@ -30,8 +30,6 @@ namespace RescateEmocional.Controllers
                 query = query.Where(a => a.Nombre.Contains(administrador.Nombre));
             if (!string.IsNullOrWhiteSpace(administrador.CorreoElectronico))
                 query = query.Where(a => a.CorreoElectronico.Contains(administrador.CorreoElectronico));
-            if (administrador.Idrol > 0)
-                query = query.Where(a => a.Idrol == administrador.Idrol);
 
             query = query.OrderByDescending(a => a.Idadmin);
 
@@ -40,9 +38,6 @@ namespace RescateEmocional.Controllers
 
             query = query.Include(a => a.IdrolNavigation);
 
-            var roles = _context.Rols.ToList();
-            roles.Add(new Rol { Nombre = "SELECCIONAR", Idrol = 0 });
-            ViewData["Idrol"] = new SelectList(roles, "Idrol", "Nombre", 0);
 
             return View(await query.ToListAsync());
         }
