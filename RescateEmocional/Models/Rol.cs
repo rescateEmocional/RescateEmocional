@@ -10,6 +10,7 @@ public partial class Rol
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     public string Nombre { get; set; } = null!;
 
+    [Display(Name = "Descripción")]
     public string? Descripcion { get; set; }
 
     public virtual ICollection<Administrador> Administradors { get; set; } = new List<Administrador>();
