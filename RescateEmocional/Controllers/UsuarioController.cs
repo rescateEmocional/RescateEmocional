@@ -66,70 +66,6 @@ namespace RescateEmocional.Controllers
 
 
 
-        // GET: Usuario/EditarPerfil
-        public async Task<IActionResult> EditarPerfil()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Obtener ID del usuario autenticado
-            if (userId == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var usuario = await _context.Usuarios.FindAsync(int.Parse(userId));
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
-        }
-
-        // POST: Usuario/EditarPerfil
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditarPerfil(int id, string Nombre, string Telefono, string NuevaContrasena, string ConfirmarContrasena)
-        {
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            // Actualizar nombre y teléfono
-            usuario.Nombre = Nombre;
-            usuario.Telefono = Telefono;
-
-            // Si el usuario ingresa una nueva contraseña, validar y actualizar
-            if (!string.IsNullOrEmpty(NuevaContrasena))
-            {
-                if (NuevaContrasena != ConfirmarContrasena)
-                {
-                    ModelState.AddModelError("", "Las contraseñas no coinciden.");
-                    return View(usuario);
-                }
-
-                // Hashear la nueva contraseña antes de guardarla
-                var passwordHasher = new PasswordHasher<Usuario>();
-                usuario.Contrasena = passwordHasher.HashPassword(usuario, NuevaContrasena);
-            }
-
-            try
-            {
-                _context.Update(usuario);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Perfil actualizado con éxito.";
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                ModelState.AddModelError("", "Error al actualizar el perfil.");
-                return View(usuario);
-            }
-
-            return RedirectToAction("Perfil");
-        }
-
-
 
 
 
@@ -226,7 +162,7 @@ namespace RescateEmocional.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Perfil));
             }
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", usuario.Idrol);
             return View(usuario);
