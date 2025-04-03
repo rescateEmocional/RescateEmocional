@@ -16,7 +16,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label"><i class="fas fa-calendar-alt"></i> Fecha de Creación</label>
+                    <label class="control-label"><i class="fas fa-calendar-alt"></i> Fecha</label>
                     <input type="date" name="FechaCreacion" class="form-control" />
                 </div>
             </div>
@@ -64,7 +64,7 @@
                                 <strong><i class="fas fa-book-open"></i> @item.Titulo</strong>
                             </div>
                             <div class="card-body text-center">
-                                <p><strong><i class="fas fa-calendar-alt"></i> Fecha de Creación:</strong> @item.FechaCreacion</p>
+                                <p><strong><i class="fas fa-calendar-alt"></i> Fecha:</strong> @item.FechaCreacion</p>
                                 <div class="d-flex justify-content-center gap-2">
                                     <a asp-action="Edit" asp-route-id="@item.Iddiario" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Editar</a>
                                     <a asp-action="Details" asp-route-id="@item.Iddiario" class="btn btn-info btn-sm"><i class="fas fa-book-reader"></i> Ver Diario</a>

@@ -13,6 +13,7 @@ public partial class Administrador
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     public string Nombre { get; set; } = null!;
 
+    [Display(Name = "Correo electrónico")]
     [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
     [EmailAddress(ErrorMessage = "El correo electrónico no tiene un formato válido.")]
     public string CorreoElectronico { get; set; } = null!;
