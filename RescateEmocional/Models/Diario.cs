@@ -14,7 +14,7 @@ public partial class Diario
     [Display(Name = "Título")]
     public string Titulo { get; set; } = null!;
 
-    [MaxLength(2000)]
+    [MaxLength(5000)]
     [Required(ErrorMessage = "El contenido es obligatorio.")]
     public string Contenido { get; set; } = null!;
 
