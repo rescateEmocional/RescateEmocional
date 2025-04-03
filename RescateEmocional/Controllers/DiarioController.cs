@@ -20,20 +20,6 @@ namespace RescateEmocional.Controllers
             _context = context;
         }
 
-        // GET: Diario
-        //public async Task<IActionResult> Index()
-        //{
-        //    // Obtener el Id del usuario autenticado
-        //    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
-        //    // Filtrar los diarios del usuario autenticado
-        //    var rescateEmocionalContext = _context.Diarios
-        //        .Where(d => d.Idusuario == userId) // Filtra por el Idusuario del usuario autenticado
-        //        .Include(d => d.IdusuarioNavigation);
-
-        //    // Retorna la vista con los diarios filtrados
-        //    return View(await rescateEmocionalContext.ToListAsync());
-        //}
         public async Task<IActionResult> Index(Diario diario, int topRegistro = 10)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -44,16 +30,14 @@ namespace RescateEmocional.Controllers
 
             var query = _context.Diarios.AsQueryable();
             if (!string.IsNullOrWhiteSpace(diario.Titulo))
-                query = query.Where(a => a.Titulo.Contains(diario.Titulo));
-            if (!string.IsNullOrWhiteSpace(diario.Contenido))
-                query = query.Where(a => a.Contenido.Contains(diario.Contenido));
+                query = query.Where(d => d.Titulo.Contains(diario.Titulo));
+            if (diario.FechaCreacion != default(DateTime))
+                query = query.Where(d => d.FechaCreacion.Date == diario.FechaCreacion.Date);
 
-            query = query.OrderByDescending(a => a.Iddiario);
+            query = query.OrderByDescending(d => d.Iddiario);
 
             if (topRegistro > 0)
                 query = query.Take(topRegistro);
-
-            var roles = _context.Rols.ToList();
 
             return View(await query.ToListAsync());
         }

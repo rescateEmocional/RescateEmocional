@@ -1,43 +1,51 @@
 ﻿@model RescateEmocional.Models.Usuario
 
 @{
-    ViewData["Title"] = "Editar Perfil";
+    ViewData["Title"] = "Editar perfil";
 }
 
-<h2 class="text-center">Editar Perfil</h2>
+<h1>Editar</h1>
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <form asp-action="EditarPerfil" method="post">
+<h4>Usuario</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Idusuario" />
             <div class="form-group">
-                <label asp-for="Nombre" class="control-label">Nombre</label>
-                <input asp-for="Nombre" class="form-control" required />
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" class="form-control" />
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
-
             <div class="form-group">
-                <label asp-for="Telefono" class="control-label">Teléfono</label>
-                <input asp-for="Telefono" class="form-control" required />
+                <label asp-for="CorreoElectronico" class="control-label"></label>
+                <input asp-for="CorreoElectronico" class="form-control" />
+                <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Telefono" class="control-label"></label>
+                <input asp-for="Telefono" class="form-control" />
                 <span asp-validation-for="Telefono" class="text-danger"></span>
             </div>
-
             <div class="form-group">
-                <label class="control-label">Nueva Contraseña</label>
-                <input type="password" name="NuevaContrasena" class="form-control" />
+                <label asp-for="Contrasena" class="control-label"></label>
+                <input asp-for="Contrasena" class="form-control" />
+                <span asp-validation-for="Contrasena" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label class="control-label">Confirmar Contraseña</label>
-                <input type="password" name="ConfirmarContrasena" class="form-control" />
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Perfil">Perfil</a>
             </div>
-
-            <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
         </form>
     </div>
 </div>
 
+<div>
+    <a asp-action="Perfil">Perfil</a>
+</div>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

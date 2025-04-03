@@ -1,29 +1,27 @@
 ﻿@model IEnumerable<RescateEmocional.Models.Diario>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Diarios";
 }
 
-<h1>Index</h1>
-<h1 class="text-center my-4"><i class="fas fa-users-cog"></i> Buscar Administradores</h1>
+<h1 class="text-center my-4"><i class="fas fa-book"></i> Buscar Diarios</h1>
 <div class="d-flex justify-content-center">
     <form asp-action="Index" class="bg-light p-4 rounded shadow-sm w-50">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label"><i class="fas fa-user"></i> Titulo</label>
-                    <input type="text" name="Titulo" class="form-control" placeholder="Ingrese el Titulo" />
+                    <label class="control-label"><i class="fas fa-heading"></i> Título</label>
+                    <input type="text" name="Titulo" class="form-control" placeholder="Ingrese el título" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label"><i class="fas fa-envelope"></i>contenido</label>
-                    <input type="text" name="Contenido" class="form-control" placeholder="Ingrese el correo" />
+                    <label class="control-label"><i class="fas fa-calendar-alt"></i> Fecha de Creación</label>
+                    <input type="date" name="FechaCreacion" class="form-control" />
                 </div>
             </div>
         </div>
         <div class="row justify-content-center">
-            
             <div class="col-md-6">
                 <div class="form-group">
                     <label class="control-label"><i class="fas fa-sort-numeric-up"></i> Cant. Registros</label>
@@ -42,54 +40,55 @@
         <div class="row mt-3 mb-2">
             <div class="col-12 text-center">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
-                <a class="btn btn-success" asp-action="Create"><i class="fas fa-user-plus"></i> Ir a crear</a>
+                <a class="btn btn-success" asp-action="Create"><i class="fas fa-plus-circle"></i> Crear Diario</a>
             </div>
         </div>
     </form>
 </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Titulo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Contenido)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaCreacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdusuarioNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Contenido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaCreacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdusuarioNavigation.Idusuario)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Iddiario">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Iddiario">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Iddiario">Delete</a>
-            </td>
-        </tr>
+<!-- Contenedor para DataTables -->
+<div class="table-responsive mt-4">
+    <table id="tablaDiarios" class="table table-borderless">
+        <thead style="display: none;">
+            <tr>
+                <th>Diarios</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="card border-info mb-3" style="width: 90%; max-width: 600px; margin: auto;">
+                            <div class="card-header text-center bg-info text-white">
+                                <strong><i class="fas fa-book-open"></i> @item.Titulo</strong>
+                            </div>
+                            <div class="card-body text-center">
+                                <p><strong><i class="fas fa-calendar-alt"></i> Fecha de Creación:</strong> @item.FechaCreacion</p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.Iddiario" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                                    <a asp-action="Details" asp-route-id="@item.Iddiario" class="btn btn-info btn-sm"><i class="fas fa-book-reader"></i> Ver Diario</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Iddiario" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tablaDiarios').DataTable({
+                "paging": true, // Habilita la paginación
+                "ordering": false, // Deshabilita el ordenamiento por columnas
+                "searching": false, // Oculta la barra de búsqueda
+                "lengthChange": false, // Oculta el "Mostrar X registros"
+                "language": languageTable
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>

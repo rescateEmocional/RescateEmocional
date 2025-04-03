@@ -1,6 +1,7 @@
 ﻿ using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace RescateEmocional.Controllers
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre"); // Mostrar el nombre del rol
             return View();
         }
-
+        //Conexion con la tabla itermediaria AdministradorOrganizacion
         // POST: Organizacion/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -63,12 +64,30 @@ namespace RescateEmocional.Controllers
                 organizacion.Contrasena = CalcularHashMD5(organizacion.Contrasena);
                 _context.Add(organizacion);
                 await _context.SaveChangesAsync();
+
+                // Obtener el ID del administrador (ejemplo: usuario autenticado)
+
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);; // Implementa esta función según tu autenticación
+
+                // Buscar al administrador en la base de datos
+                var administrador = await _context.Administradors
+                    .Include(a => a.Idorganizacions) // Cargar la relación
+                    .FirstOrDefaultAsync(a => a.Idadmin == userId);
+
+                if (administrador != null)
+                {
+                    // Agregar la organización a la colección del administrador
+                    administrador.Idorganizacions.Add(organizacion);
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", organizacion.Idrol);
             return View(organizacion);
         }
-
+     
         // GET: Organizacion/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

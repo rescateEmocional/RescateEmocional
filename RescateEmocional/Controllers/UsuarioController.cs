@@ -39,6 +39,33 @@ namespace RescateEmocional.Controllers
             return View(organizaciones);
         }
 
+
+
+
+        //LOGICA DEL PERFIL
+        public async Task<IActionResult> Perfil()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Obtener ID del usuario autenticado
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var usuario = await _context.Usuarios
+                .Include(u => u.IdrolNavigation) // Para obtener el nombre del rol
+                .FirstOrDefaultAsync(u => u.Idusuario == int.Parse(userId));
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return View(usuario);
+        }
+
+
+
+
         // GET: Usuario/EditarPerfil
         public async Task<IActionResult> EditarPerfil()
         {
@@ -99,29 +126,7 @@ namespace RescateEmocional.Controllers
                 return View(usuario);
             }
 
-            return RedirectToAction("EditarPerfil");
-        }
-
-
-        //LOGICA DEL PERFIL
-        public async Task<IActionResult> Perfil()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Obtener ID del usuario autenticado
-            if (userId == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var usuario = await _context.Usuarios
-                .Include(u => u.IdrolNavigation) // Para obtener el nombre del rol
-                .FirstOrDefaultAsync(u => u.Idusuario == int.Parse(userId));
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
+            return RedirectToAction("Perfil");
         }
 
 
