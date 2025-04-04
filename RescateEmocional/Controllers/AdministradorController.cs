@@ -78,14 +78,39 @@ namespace RescateEmocional.Controllers
         {
             if (ModelState.IsValid)
             {
-                administrador.Contrasena = CalcularHashMD5(administrador.Contrasena);
-                _context.Add(administrador);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Verificar si el correo electrónico ya existe en la base de datos
+                    var correoExistente = await _context.Administradors
+                        .FirstOrDefaultAsync(a => a.CorreoElectronico == administrador.CorreoElectronico);
+
+                    if (correoExistente != null)
+                    {
+                        // Si el correo ya existe, agregar un error al ModelState
+                        ModelState.AddModelError("CorreoElectronico", "Este correo electrónico ya está registrado.");
+                    }
+                    else
+                    {
+                        // Si el correo no existe, proceder con la creación del administrador
+                        administrador.Contrasena = CalcularHashMD5(administrador.Contrasena);
+                        _context.Add(administrador);
+                        await _context.SaveChangesAsync();
+
+                        // Redirigir si todo salió bien
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Si ocurre algún otro error, agregar un error general al ModelState
+                    ModelState.AddModelError(string.Empty, "Ocurrió un error al guardar el administrador.");
+                }
             }
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", administrador.Idrol);
+
+            // Recargar datos necesarios para la vista
             return View(administrador);
         }
+
 
         // GET: Administrador/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -109,7 +134,7 @@ namespace RescateEmocional.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Idadmin,Nombre,CorreoElectronico,Contrasena,Idrol")] Administrador administrador)
+        public async Task<IActionResult> Edit(int id, [Bind("Idadmin,Nombre,CorreoElectronico,Idrol")] Administrador administrador)
 {
     if (id != administrador.Idadmin)
     {
@@ -126,7 +151,6 @@ namespace RescateEmocional.Controllers
     {
         adminUpdate.Nombre = administrador.Nombre;
         adminUpdate.CorreoElectronico = administrador.CorreoElectronico;
-        adminUpdate.Contrasena = CalcularHashMD5(administrador.Contrasena);
         adminUpdate.Idrol = administrador.Idrol;
 
         _context.Update(adminUpdate);
