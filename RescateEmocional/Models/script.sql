@@ -151,3 +151,43 @@ CREATE TABLE Diario (
     FOREIGN KEY (IDUsuario) REFERENCES Usuario(IDUsuario)
 );
 GO
+
+
+
+use RescateEmocional;
+-- Insertar un Administrador
+INSERT INTO Administrador (Nombre, CorreoElectronico, Contrasena, IDRol)
+VALUES ('Admin Principal', 'admin@email.com', '123456', 1);
+
+-- Insertar una Organización
+INSERT INTO Organizacion (Nombre, Descripcion, Horario, Ubicacion, Estado, IDRol, CorreoElectronico, Contrasena) 
+VALUES ('Ayuda Social', 'Organización dedicada al bienestar emocional.', 'Lunes a Viernes, 9AM - 6PM', 'Calle Falsa 123, Ciudad', 1, 2, 'Organizacion@gmail.com', '123456');
+
+-- Insertar un Usuario
+INSERT INTO Usuario (Nombre, CorreoElectronico, Telefono, Contrasena, Estado, IDRol)
+VALUES ('Juan Pérez', 'usuario@email.com', '123456789', '123456', 1, 3);
+
+SET IDENTITY_INSERT Rol ON;
+
+INSERT INTO Rol (IDRol, Nombre, Descripcion) 
+VALUES 
+    (1, 'Administrador', 'Son los administradores'),
+    (2, 'Organizaciones', 'Son las organizaciones'),
+    (3, 'Usuarios', 'Son los usuarios');
+
+SET IDENTITY_INSERT Rol OFF;
+
+
+SELECT * FROM Administrador;
+SELECT * FROM Organizacion;
+SELECT * FROM Usuario;
+SELECT * FROM Rol;
+
+
+DELETE FROM Usuario;
+DELETE FROM Administrador;
+DELETE FROM Organizacion;
+
+ALTER TABLE Organizacion 
+ADD CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
+    Contrasena VARCHAR(255) NOT NULL;
