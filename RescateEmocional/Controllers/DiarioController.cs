@@ -7,12 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RescateEmocional.Models;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 
 
 namespace RescateEmocional.Controllers
 {
-    [Authorize(Roles = "3")]
     public class DiarioController : Controller
     {
         private readonly RescateEmocionalContext _context;

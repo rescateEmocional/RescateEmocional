@@ -127,10 +127,4 @@ public class AccountController : Controller
             return sb.ToString();
         }
     }
-    public IActionResult AccesoDenegado()
-    {
-        ViewBag.Mensaje = "No tienes acceso a esta página.";
-        return View();
-    }
-
 }
