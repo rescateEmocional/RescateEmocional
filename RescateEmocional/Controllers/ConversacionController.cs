@@ -11,6 +11,8 @@ using System.Security.Claims;
 
 namespace RescateEmocional.Controllers
 {
+    [Authorize(Roles = "3")]
+    [Authorize(Roles = "2")]
     public class ConversacionController : Controller
     {
         private readonly RescateEmocionalContext _context;

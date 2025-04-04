@@ -1,27 +1,42 @@
 ﻿@model RescateEmocional.Models.Usuario
 
 @{
+
     ViewData["Title"] = "Mi Perfil";
 }
 
-<h2 class="text-center">Mi Perfil</h2>
+<h2 class="text-center mb-4"><i class="bi bi-person-vcard-fill me-2"></i> Mi Perfil</h2>
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
+    <div class="col-md-8">
+        <div class="card shadow">
             <div class="card-body">
-                <h4 class="card-title text-center">@Model.Nombre</h4>
-                <hr />
+                <h4 class="card-title text-center mb-3">@Model.Nombre</h4>
+                <hr class="mb-3" />
 
-                <p><strong>Correo Electrónico:</strong> @Model.CorreoElectronico</p>
-                <p><strong>Teléfono:</strong> @Model.Telefono</p>
-                <p><strong>Rol:</strong> @Model.IdrolNavigation.Nombre</p>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><i class="bi bi-envelope me-2"></i> <strong>Correo Electrónico:</strong></p>
+                        <p class="ms-4">@Model.CorreoElectronico</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><i class="bi bi-telephone me-2"></i> <strong>Teléfono:</strong></p>
+                        <p class="ms-4">@Model.Telefono</p>
+                    </div>
+                </div>
 
-             <div>
-                <a asp-action="EditarPerfil">Editar perfil</a>
+                <div class="mb-3">
+                    <p><i class="bi bi-person-badge me-2"></i> <strong>Rol:</strong></p>
+                    <p class="ms-4">@Model.IdrolNavigation.Nombre</p>
+                </div>
+
+                <hr class="mt-3 mb-3" />
+
+                <div class="text-end">
+                    <a asp-action="Edit" asp-route-id="@Model.Idusuario" class="btn btn-outline-primary"><i class="bi bi-pencil me-2"></i> Editar</a>
+                </div>
+
             </div>
-
-             </div>
         </div>
     </div>
 </div>

@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using RescateEmocional.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RescateEmocional.Controllers
 {
+    [Authorize(Roles = "3")]
     public class UsuarioController : Controller
     {
         private readonly RescateEmocionalContext _context;
@@ -134,10 +136,9 @@ namespace RescateEmocional.Controllers
             return View(usuario);
         }
 
-        // POST: Usuario/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Idusuario,Nombre,CorreoElectronico,Telefono,Contrasena,Estado,Idrol")] Usuario usuario)
+        public async Task<IActionResult> Edit(int id, [Bind("Idusuario,Nombre,CorreoElectronico,Telefono,Contrasena,Estado")] Usuario usuario)
         {
             if (id != usuario.Idusuario)
             {
@@ -148,8 +149,22 @@ namespace RescateEmocional.Controllers
             {
                 try
                 {
+                    // Obtener el usuario actual de la base de datos
+                    var usuarioExistente = await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Idusuario == id);
+                    if (usuarioExistente == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Mantener el IDRol actual
+                    usuario.Idrol = usuarioExistente.Idrol;
+
+                    // Actualizar usuario
                     _context.Update(usuario);
                     await _context.SaveChangesAsync();
+
+                    // Redirigir al perfil
+                    return RedirectToAction("Perfil");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -162,11 +177,13 @@ namespace RescateEmocional.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Perfil));
             }
+
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol", usuario.Idrol);
             return View(usuario);
         }
+
+        
 
         // GET: Usuario/Delete/5
         public async Task<IActionResult> Delete(int? id)

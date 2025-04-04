@@ -1,0 +1,53 @@
+﻿@model RescateEmocional.Models.Usuario
+
+@{
+    ViewData["Title"] = "Editar perfil";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <i class="bi bi-pencil-square me-2"></i> Editar Perfil
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="Idusuario" />
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label"><i class="bi bi-person-fill me-2"></i> @Html.DisplayNameFor(model => model.Nombre)</label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+                        <hr class="my-3" />
+                        <div class="mb-3">
+                            <label asp-for="CorreoElectronico" class="form-label"><i class="bi bi-envelope-fill me-2"></i> @Html.DisplayNameFor(model => model.CorreoElectronico)</label>
+                            <input asp-for="CorreoElectronico" type="email" class="form-control" />
+                            <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
+                        </div>
+                        <hr class="my-3" />
+                        <div class="mb-3">
+                            <label asp-for="Telefono" class="form-label"><i class="bi bi-telephone-fill me-2"></i> @Html.DisplayNameFor(model => model.Telefono)</label>
+                            <input asp-for="Telefono" class="form-control" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+                        <hr class="my-4" />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save-fill me-2"></i> Guardar Cambios</button>
+                            <a asp-action="Perfil" class="btn btn-secondary"><i class="bi bi-arrow-left-circle-fill me-2"></i> Volver al Perfil</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ using RescateEmocional.Models;
 
 namespace RescateEmocional.Controllers
 {
+    [Authorize(Roles = "3")]
+    [Authorize(Roles = "1")]
     public class OrganizacionController : Controller
     {
         private readonly RescateEmocionalContext _context;
