@@ -12,7 +12,7 @@ using RescateEmocional.Models;
 
 namespace RescateEmocional.Controllers
 {
-
+    [Authorize(Roles = "1")]
     public class AdministradorController : Controller
     {
         private readonly RescateEmocionalContext _context;
