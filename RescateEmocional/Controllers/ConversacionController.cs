@@ -21,6 +21,61 @@ namespace RescateEmocional.Controllers
             _context = context;
         }
 
+        // GET: Conversacion/Create
+        [Authorize]
+        public IActionResult Create()
+        {
+            if (User.IsInRole("3")) // Usuario
+            {
+                ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Nombre");
+            }
+            else if (User.IsInRole("2")) // Organización
+            {
+                ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Nombre");
+            }
+            return View();
+        }
+
+        // POST: Conversacion/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Create([Bind("Idorganizacion,Mensaje")] Conversacion conversacion)
+        {
+            string userName = User.FindFirstValue(ClaimTypes.Name);
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                ModelState.AddModelError("", "No se pudo obtener el usuario autenticado.");
+                return View(conversacion);
+            }
+
+            // Obtener el usuario autenticado
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Nombre == userName);
+            if (usuario == null)
+            {
+                ModelState.AddModelError("", "No se encontró el usuario autenticado.");
+                return View(conversacion);
+            }
+
+            conversacion.Idusuario = usuario.Idusuario;
+
+            if (conversacion.Idorganizacion <= 0)
+            {
+                ModelState.AddModelError("Idorganizacion", "Debe seleccionar una organización.");
+                return View(conversacion);
+            }
+
+            conversacion.Emisor = "Usuario"; // Siempre el usuario inicia la conversación
+            conversacion.FechaInicio = DateTime.Now;
+
+            _context.Add(conversacion);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
         // GET: Conversacion
         public async Task<IActionResult> Index()
         {
@@ -201,6 +256,7 @@ namespace RescateEmocional.Controllers
             ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Idusuario", conversacion.Idusuario);
             return View(conversacion);
         }
+
 
         
     }

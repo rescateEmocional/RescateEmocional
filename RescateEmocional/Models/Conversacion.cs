@@ -15,6 +15,9 @@ namespace RescateEmocional.Models
 
         public string? Mensaje { get; set; }
 
+        // Nueva propiedad agregada
+        public string? Emisor { get; set; }
+
         // Navegación hacia el usuario que creó la conversación
         public virtual Usuario? IdusuarioNavigation { get; set; }
 

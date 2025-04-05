@@ -11,10 +11,10 @@
     <div class="card shadow-lg border-0 rounded-3">
         <div class="card-body p-4">
             <h4 class="card-title text-secondary mb-3">Detalles de la Conversación</h4>
-            <hr class="mb-4">
+            <hr class="mb-4" />
 
             <form asp-action="Create" class="needs-validation" novalidate>
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                 @if (esOrganizacion)
                 {
@@ -23,6 +23,7 @@
                         <select asp-for="Idusuario" class="form-select" asp-items="ViewBag.Idusuario" required>
                             <option value="">Seleccione un usuario</option>
                         </select>
+                        <span asp-validation-for="Idusuario" class="text-danger"></span>
                         <div class="invalid-feedback">Por favor seleccione un usuario</div>
                     </div>
                 }
@@ -33,6 +34,7 @@
                         <select asp-for="Idorganizacion" class="form-select" asp-items="ViewBag.Idorganizacion" required>
                             <option value="">Seleccione una organización</option>
                         </select>
+                        <span asp-validation-for="Idorganizacion" class="text-danger"></span>
                         <div class="invalid-feedback">Por favor seleccione una organización</div>
                     </div>
                 }
@@ -59,36 +61,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .container {
-        max-width: 700px;
-    }
-
-    .card {
-        background: #f8f9fa;
-    }
-
-    .form-control, .form-select {
-        border-radius: 8px;
-        padding: 0.75rem;
-        border: 1px solid #ced4da;
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border-radius: 8px;
-        transition: all 0.3s;
-    }
-
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-        }
-
-    .btn-outline-secondary {
-        border-radius: 8px;
-    }
-</style>
 
 @section Scripts {
     @{
