@@ -123,7 +123,7 @@ namespace RescateEmocional.Controllers
         }
 
 
-        // GET: Administrador/Edit/5
+        // GET: Administrador/Edit/5 editar perfil
         public async Task<IActionResult> Edit(int? id) // Acción que se ejecuta cuando el usuario quiere editar un administrador
         {
             if (id == null) // Verifica si el id proporcionado es nulo
