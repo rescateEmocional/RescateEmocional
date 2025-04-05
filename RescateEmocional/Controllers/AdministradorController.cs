@@ -26,7 +26,7 @@ namespace RescateEmocional.Controllers
         }
 
         // Acción que devuelve una lista de administradores según los filtros aplicados
-        // Se puede filtrar por nombre, correo electrónico y limitar el número de registros (por defecto 10)
+        // Se puede filtrar por nombre, correo electrónico y limitar el número de registros (por defecto 10) vista index de admin
         public async Task<IActionResult> Index(Administrador administrador, int topRegistro = 10)
         {
             // Se obtiene una consulta de todos los administradores
