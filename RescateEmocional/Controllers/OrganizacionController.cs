@@ -57,44 +57,56 @@ namespace RescateEmocional.Controllers
         // GET: Organizacion/Create
         public IActionResult Create()
         {
-            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre"); // Mostrar el nombre del rol
+            ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre");
             return View();
         }
-        //Conexion con la tabla itermediaria AdministradorOrganizacion
-        // POST: Organizacion/Create
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol,CorreoElectronico,Contrasena")] Organizacion organizacion)
         {
-            if (ModelState.IsValid)
+            try
             {
-                organizacion.Contrasena = CalcularHashMD5(organizacion.Contrasena);
-                _context.Add(organizacion);
-                await _context.SaveChangesAsync();
+                // Validación manual del correo
+                bool correoExiste = await _context.Organizacions
+                    .AnyAsync(o => o.CorreoElectronico == organizacion.CorreoElectronico);
 
-                // Obtener el ID del administrador (ejemplo: usuario autenticado)
-
-                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);; // Implementa esta función según tu autenticación
-
-                // Buscar al administrador en la base de datos
-                var administrador = await _context.Administradors
-                    .Include(a => a.Idorganizacions) // Cargar la relación
-                    .FirstOrDefaultAsync(a => a.Idadmin == userId);
-
-                if (administrador != null)
+                if (correoExiste)
                 {
-                    // Agregar la organización a la colección del administrador
-                    administrador.Idorganizacions.Add(organizacion);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError("CorreoElectronico", "El correo electrónico ya está registrado");
                 }
 
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    organizacion.Contrasena = CalcularHashMD5(organizacion.Contrasena);
+                    _context.Add(organizacion);
+                    await _context.SaveChangesAsync();
+
+                    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                    var administrador = await _context.Administradors
+                        .Include(a => a.Idorganizacions)
+                        .FirstOrDefaultAsync(a => a.Idadmin == userId);
+
+                    if (administrador != null)
+                    {
+                        administrador.Idorganizacions.Add(organizacion);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                // Manejar error de SQL
+                ModelState.AddModelError("CorreoElectronico", ex.InnerException.Message.Contains("duplicate") ?
+                    "El correo electrónico ya está registrado" : "Error al guardar en la base de datos");
             }
 
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre", organizacion.Idrol);
             return View(organizacion);
         }
-     
+
         // GET: Organizacion/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

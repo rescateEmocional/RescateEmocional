@@ -9,7 +9,7 @@
             <h2 class="display-5 mb-0"><i class="bi bi-building me-2"></i>@ViewData["Title"]</h2>
         </div>
         <div class="card-body">
-            <form asp-action="Create" class="needs-validation" novalidate>
+            <form asp-action="Create" class="needs-validation" novalidate id="organizacionForm">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                 <div class="row g-4">
@@ -48,12 +48,12 @@
                         </div>
                     </div>
 
-                    <!-- Sección Corregida: Correo Electrónico -->
+                    <!-- Campo Correo Electrónico -->
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder=" " required />
-                            <label>Correo Electrónico</label> <!-- Etiqueta corregida con acento -->
-                            <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
+                            <label>Correo Electrónico</label>
+                            <span asp-validation-for="CorreoElectronico" class="text-danger small" id="emailError"></span>
                         </div>
                     </div>
 
@@ -80,7 +80,7 @@
                     <a asp-action="Index" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left-circle me-2"></i>Volver al listado
                     </a>
-                    <button type="submit" class="btn btn-primary btn-lg">
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                         <i class="bi bi-save me-2"></i>Guardar Organización
                     </button>
                 </div>
@@ -93,4 +93,58 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('organizacionForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const emailError = document.querySelector('[data-valmsg-for="CorreoElectronico"]');
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                // Reiniciar mensajes de error
+                emailError.textContent = '';
+
+                // Validación básica del cliente
+                if (!form.checkValidity()) {
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    });
+
+                    const result = await response.json().catch(() => null);
+
+                    if (response.ok && result) {
+                        window.location.href = '@Url.Action("Index")';
+                    } else {
+                        // Manejar error de correo duplicado
+                        if (response.status === 400 && result.errors?.CorreoElectronico) {
+                            emailError.textContent = result.errors.CorreoElectronico[0];
+                        } else if (response.status === 500 && result.includes('duplicate')) {
+                            emailError.textContent = 'El correo electrónico ya está registrado';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    emailError.textContent = 'Error al procesar la solicitud';
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-save me-2"></i>Guardar Organización';
+                }
+            });
+        });
+    </script>
 }
