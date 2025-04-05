@@ -68,11 +68,15 @@
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
 
+            <!-- Dentro del formulario, justo después del input de Correo Electrónico para validaciones de correos existentes -->
             <div class="form-group">
                 <label asp-for="CorreoElectronico" class="control-label">Correo Electrónico</label>
                 <input asp-for="CorreoElectronico" class="form-control" type="email" required />
                 <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
+                <span id="correo-error" class="text-danger"></span>
             </div>
+
+         
 
             <div class="form-group">
                 <label asp-for="Telefono" class="control-label">Teléfono</label>
@@ -93,5 +97,33 @@
             <p>¿Ya tienes cuenta? <a href="@Url.Action("Login", "Account")">Inicia sesión aquí</a></p>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#CorreoElectronico').on('blur', function () {
+                var correo = $(this).val();
+
+                if (correo.trim() === '') return;
+
+                $.ajax({
+                    url: '/Usuario/VerificarCorreo',
+                    type: 'GET',
+                    data: { correo: correo },
+                    success: function (existe) {
+                        if (existe) {
+                            $('#correo-error').text("Este correo ya está registrado.");
+                        } else {
+                            $('#correo-error').text("");
+                        }
+                    },
+                    error: function () {
+                        console.error("Error al verificar el correo.");
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>
