@@ -204,7 +204,7 @@ namespace RescateEmocional.Controllers
             }
         }
 
-        // GET: Administrador/Delete/5
+        // GET: Administrador/Delete/5 eliminar administrador
         public async Task<IActionResult> Delete(int? id) // Acción GET para mostrar el formulario de confirmación de eliminación
         {
             if (id == null) // Verifica si el id proporcionado es nulo
