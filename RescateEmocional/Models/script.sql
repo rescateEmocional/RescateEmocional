@@ -191,3 +191,67 @@ DELETE FROM Organizacion;
 ALTER TABLE Organizacion 
 ADD CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
     Contrasena VARCHAR(255) NOT NULL;
+
+
+    //alter table de kevin//
+
+    USE RescateEmocional;
+GO
+
+-- Rol
+ALTER TABLE Rol
+ALTER COLUMN Descripcion NVARCHAR(255);
+GO
+
+-- Usuario
+ALTER TABLE Usuario
+ALTER COLUMN Telefono VARCHAR(20) NULL;
+GO
+
+ALTER TABLE Usuario
+ADD CONSTRAINT DF_Usuario_Estado DEFAULT 1 FOR Estado;
+GO
+
+-- Organizacion
+ALTER TABLE Organizacion
+ADD CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
+    Contrasena VARCHAR(255) NOT NULL;
+GO
+
+ALTER TABLE Organizacion
+ADD CONSTRAINT DF_Organizacion_Estado DEFAULT 0 FOR Estado;
+GO
+
+-- PeticionVerificacion
+ALTER TABLE PeticionVerificacion
+ADD CONSTRAINT DF_PeticionVerificacion_Estado DEFAULT 0 FOR Estado;
+GO
+
+ALTER TABLE PeticionVerificacion
+ADD CONSTRAINT DF_PeticionVerificacion_FechaSolicitud DEFAULT GETDATE() FOR FechaSolicitud;
+GO
+
+-- Conversacion
+ALTER TABLE Conversacion
+ADD Emisor NVARCHAR(50) NULL;
+GO
+
+ALTER TABLE Conversacion
+ADD CONSTRAINT DF_Conversacion_FechaInicio DEFAULT GETDATE() FOR FechaInicio;
+GO
+
+-- Mensaje
+ALTER TABLE Mensaje
+ADD IDUsuario INT NULL,
+    IDOrganizacion INT NULL;
+GO
+
+ALTER TABLE Mensaje
+ADD CONSTRAINT FK_Mensaje_Usuario FOREIGN KEY (IDUsuario) REFERENCES Usuario(IDUsuario),
+    CONSTRAINT FK_Mensaje_Organizacion FOREIGN KEY (IDOrganizacion) REFERENCES Organizacion(IDOrganizacion);
+GO
+
+ALTER TABLE Mensaje
+ADD CONSTRAINT DF_Mensaje_FechaHora DEFAULT GETDATE() FOR FechaHora,
+    CONSTRAINT DF_Mensaje_Estado DEFAULT 0 FOR Estado;
+GO

@@ -11,7 +11,7 @@
 <div class="messaging-container">
     <div class="chat-header">
         <h1>Conversación</h1>
-        
+
         @if (userRole == "Usuario")
         {
             <a asp-action="Create" class="new-message-btn">+ Nuevo Mensaje</a>
@@ -56,7 +56,7 @@
                             <a asp-action="Details" asp-route-id="@item.Idconversacion" class="action-btn details">Ver</a>
                         </div>
                         <!-- Información de depuración -->
-                        
+
                     </div>
                 </div>
             }
