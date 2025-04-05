@@ -193,7 +193,7 @@ ADD CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
     Contrasena VARCHAR(255) NOT NULL;
 
 
-    //alter table de kevin//
+  
 
     USE RescateEmocional;
 GO

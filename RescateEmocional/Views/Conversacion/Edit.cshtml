@@ -1,51 +1,130 @@
 ﻿@model RescateEmocional.Models.Conversacion
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Conversación";
 }
 
-<h1>Edit</h1>
+<div class="edit-container">
+    <div class="form-header">
+        <h1>Editar Conversación</h1>
+        <p>Modifica el mensaje seleccionado.</p>
+    </div>
 
-<h4>Conversacion</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    <div class="form-card">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- ID de la conversación -->
             <input type="hidden" asp-for="Idconversacion" />
+
+            <!-- Campos ocultos para usuario y organización -->
+            <input type="hidden" asp-for="Idusuario" />
+            <input type="hidden" asp-for="Idorganizacion" />
+
+            <!-- Fecha -->
             <div class="form-group">
-                <label asp-for="Idusuario" class="control-label"></label>
-                <select asp-for="Idusuario" class="form-control" asp-items="ViewBag.Idusuario"></select>
-                <span asp-validation-for="Idusuario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Idorganizacion" class="control-label"></label>
-                <select asp-for="Idorganizacion" class="form-control" asp-items="ViewBag.Idorganizacion"></select>
-                <span asp-validation-for="Idorganizacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaInicio" class="control-label"></label>
-                <input asp-for="FechaInicio" class="form-control" />
+                <label asp-for="FechaInicio" class="form-label"></label>
+                <input asp-for="FechaInicio" class="form-control" type="datetime-local" />
                 <span asp-validation-for="FechaInicio" class="text-danger"></span>
             </div>
+
+            <!-- Mensaje -->
             <div class="form-group">
-                <label asp-for="Mensaje" class="control-label"></label>
-                <input asp-for="Mensaje" class="form-control" />
+                <label asp-for="Mensaje" class="form-label"></label>
+                <textarea asp-for="Mensaje" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Mensaje" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <!-- Botones -->
+            <div class="form-actions">
+                <input type="submit" value="Guardar" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    .edit-container {
+        max-width: 700px;
+        margin: 30px auto;
+        font-family: Arial, sans-serif;
+    }
+
+    .form-header {
+        background-color: #075E54;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+        color: white;
+    }
+
+        .form-header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .form-header p {
+            margin: 5px 0 0;
+            font-size: 0.95em;
+        }
+
+    .form-card {
+        background-color: #f9f9f9;
+        padding: 25px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 1em;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-success {
+        background-color: #25D366;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+    }
+
+    .btn-secondary {
+        background-color: #cccccc;
+        color: #333;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .text-danger {
+        color: #d9534f;
+        font-size: 0.9em;
+    }
+</style>
