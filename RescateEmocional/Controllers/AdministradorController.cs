@@ -73,7 +73,7 @@ namespace RescateEmocional.Controllers
             return View(administrador); // Si se encuentra el administrador, lo pasa a la vista predeterminada asociada a esta acción para mostrar los detalles del administrador.
         }
 
-        // GET: Administrador/Create
+        // GET: Administrador/Create Logica de crear
         public IActionResult Create() // Acción que responde a solicitudes HTTP GET para mostrar el formulario de creación de un nuevo administrador
         {
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre"); // Llena un SelectList con los roles disponibles, usando "Idrol" como valor y "Nombre" como texto a mostrar
