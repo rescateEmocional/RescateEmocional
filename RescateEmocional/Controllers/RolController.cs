@@ -21,7 +21,7 @@ namespace RescateEmocional.Controllers // Define el espacio de nombres donde res
         }
 
         // GET: Rol // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta base del controlador "Rol".
-        public async Task<IActionResult> Index() // Define una acción asíncrona llamada Index que devuelve un IActionResult.
+        public async Task<IActionResult> Index() // Define una acción asíncrona llamada Index que devuelve un IActionResult. ver los roles
         {
             return View(await _context.Rols.ToListAsync()); // Recupera todos los registros de la tabla "Rols" de la base de datos de forma asíncrona y los pasa a la vista predeterminada asociada a esta acción.
         }
