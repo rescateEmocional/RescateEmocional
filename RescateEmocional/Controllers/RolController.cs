@@ -116,7 +116,7 @@ namespace RescateEmocional.Controllers // Define el espacio de nombres donde res
             }
             return View(rol); // Si el modelo no es válido, devuelve la vista asociada a la acción Edit, pasando el objeto Rol para que se puedan mostrar los errores de validación en el formulario.
         }
-        // GET: Rol/Delete/5 // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta "Rol/Delete/{id}", donde {id} es un parámetro.
+        // GET: Rol/Delete/5 // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta "Rol/Delete/{id}", donde {id} es un parámetro. Eliminar
         public async Task<IActionResult> Delete(int? id) // Define una acción asíncrona llamada Delete que recibe un parámetro entero nullable llamado "id" y devuelve un IActionResult.
         {
             if (id == null) // Verifica si el parámetro "id" es nulo.
