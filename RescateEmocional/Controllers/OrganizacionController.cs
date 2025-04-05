@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RescateEmocional.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace RescateEmocional.Controllers
 {
@@ -26,9 +27,13 @@ namespace RescateEmocional.Controllers
         // GET: Organizacion
         public async Task<IActionResult> Index()
         {
-            var rescateEmocionalContext = _context.Organizacions.Include(o => o.IdrolNavigation);
-            return View(await rescateEmocionalContext.ToListAsync());
+            var query = _context.Organizacions
+                                .Include(o => o.IdrolNavigation)
+                                .OrderByDescending(d => d.Idorganizacion);
+
+            return View(await query.ToListAsync());
         }
+
 
         // GET: Organizacion/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -110,7 +115,7 @@ namespace RescateEmocional.Controllers
         // POST: Organizacion/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol,CorreoElectronico,Contrasena")] Organizacion organizacion)
+        public async Task<IActionResult> Edit(int id, [Bind("Idorganizacion,Nombre,Descripcion,Horario,Ubicacion,Estado,Idrol,CorreoElectronico")] Organizacion organizacion)
         {
             if (id != organizacion.Idorganizacion)
             {
@@ -132,7 +137,6 @@ namespace RescateEmocional.Controllers
                 organizacionUpdate.Estado = organizacion.Estado;
                 organizacionUpdate.Idrol = organizacion.Idrol;
                 organizacionUpdate.CorreoElectronico = organizacion.CorreoElectronico;
-                organizacionUpdate.Contrasena = CalcularHashMD5(organizacion.Contrasena);
 
                 _context.Update(organizacionUpdate);
                 await _context.SaveChangesAsync();
@@ -175,13 +179,20 @@ namespace RescateEmocional.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var organizacion = await _context.Organizacions.FindAsync(id);
+            var organizacion = await _context.Organizacions
+                .Include(o => o.Idadmins)
+                .FirstOrDefaultAsync(o => o.Idorganizacion == id);
+
             if (organizacion != null)
             {
+                // Quitar la relación muchos a muchos primero
+                organizacion.Idadmins.Clear();
+
+                // Luego eliminar la organización
                 _context.Organizacions.Remove(organizacion);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
