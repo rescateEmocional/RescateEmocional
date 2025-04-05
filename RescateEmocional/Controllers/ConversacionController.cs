@@ -23,16 +23,22 @@ namespace RescateEmocional.Controllers
 
         // GET: Conversacion/Create
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            if (User.IsInRole("3")) // Usuario
+            var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var rol = User.FindFirst(ClaimTypes.Role).Value;
+
+            ViewBag.EsOrganizacion = rol == "Organizacion" || rol == "2";
+
+            if (rol == "Organizacion" || rol == "2")
             {
-                ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Nombre");
+                ViewBag.Idusuario = new SelectList(await _context.Usuarios.ToListAsync(), "Idusuario", "Nombre");
             }
-            else if (User.IsInRole("2")) // Organización
+            else
             {
-                ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Nombre");
+                ViewBag.Idorganizacion = new SelectList(await _context.Organizacions.ToListAsync(), "Idorganizacion", "Nombre");
             }
+
             return View();
         }
 
@@ -40,43 +46,44 @@ namespace RescateEmocional.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Idorganizacion,Mensaje")] Conversacion conversacion)
+        public async Task<IActionResult> Create(Conversacion conversacion)
         {
-            string userName = User.FindFirstValue(ClaimTypes.Name);
+            var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var rol = User.FindFirst(ClaimTypes.Role).Value;
 
-            if (string.IsNullOrEmpty(userName))
+            if (rol == "Organizacion" || rol == "2")
             {
-                ModelState.AddModelError("", "No se pudo obtener el usuario autenticado.");
-                return View(conversacion);
+                conversacion.Idorganizacion = usuarioId;
+            }
+            else
+            {
+                conversacion.Idusuario = usuarioId;
             }
 
-            // Obtener el usuario autenticado
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Nombre == userName);
-            if (usuario == null)
-            {
-                ModelState.AddModelError("", "No se encontró el usuario autenticado.");
-                return View(conversacion);
-            }
-
-            conversacion.Idusuario = usuario.Idusuario;
-
-            if (conversacion.Idorganizacion <= 0)
-            {
-                ModelState.AddModelError("Idorganizacion", "Debe seleccionar una organización.");
-                return View(conversacion);
-            }
-
-            conversacion.Emisor = "Usuario"; // Siempre el usuario inicia la conversación
             conversacion.FechaInicio = DateTime.Now;
 
-            _context.Add(conversacion);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _context.Add(conversacion);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.EsOrganizacion = rol == "Organizacion" || rol == "2";
+
+            if (rol == "Organizacion" || rol == "2")
+            {
+                ViewBag.Idusuario = new SelectList(await _context.Usuarios.ToListAsync(), "Idusuario", "Nombre", conversacion.Idusuario);
+            }
+            else
+            {
+                ViewBag.Idorganizacion = new SelectList(await _context.Organizacions.ToListAsync(), "Idorganizacion", "Nombre", conversacion.Idorganizacion);
+            }
+
+            return View(conversacion);
         }
 
-
-
-        // GET: Conversacion
+        // GET: Conversacion/Index
         public async Task<IActionResult> Index()
         {
             var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
@@ -142,124 +149,9 @@ namespace RescateEmocional.Controllers
             return View(conversaciones);
         }
 
-
-        // POST: Conversacion/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Idconversacion,Idusuario,Idorganizacion,FechaInicio,Mensaje")] Conversacion conversacion)
-        {
-            if (id != conversacion.Idconversacion)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(conversacion);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ConversacionExists(conversacion.Idconversacion))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Idorganizacion", conversacion.Idorganizacion);
-            ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Idusuario", conversacion.Idusuario);
-            return View(conversacion);
-        }
-
-        // GET: Conversacion/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var conversacion = await _context.Conversacions
-                .Include(c => c.IdorganizacionNavigation)
-                .Include(c => c.IdusuarioNavigation)
-                .FirstOrDefaultAsync(m => m.Idconversacion == id);
-            if (conversacion == null)
-            {
-                return NotFound();
-            }
-
-            return View(conversacion);
-        }
-
-        // POST: Conversacion/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var conversacion = await _context.Conversacions.FindAsync(id);
-            if (conversacion != null)
-            {
-                _context.Conversacions.Remove(conversacion);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
         private bool ConversacionExists(int id)
         {
             return _context.Conversacions.Any(e => e.Idconversacion == id);
         }
-    
-       // GET: Conversacion/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var conversacion = await _context.Conversacions
-                .Include(c => c.IdorganizacionNavigation)
-                .Include(c => c.IdusuarioNavigation)
-                .FirstOrDefaultAsync(m => m.Idconversacion == id);
-            if (conversacion == null)
-            {
-                return NotFound();
-            }
-
-            return View(conversacion);
-        }
-        // GET: Conversacion/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var conversacion = await _context.Conversacions.FindAsync(id);
-            if (conversacion == null)
-            {
-                return NotFound();
-            }
-            ViewData["Idorganizacion"] = new SelectList(_context.Organizacions, "Idorganizacion", "Idorganizacion", conversacion.Idorganizacion);
-            ViewData["Idusuario"] = new SelectList(_context.Usuarios, "Idusuario", "Idusuario", conversacion.Idusuario);
-            return View(conversacion);
-        }
-
-
-        
     }
 }
-
-
