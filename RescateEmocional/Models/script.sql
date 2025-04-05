@@ -1,4 +1,4 @@
- -- Crear la base de datos
+-- Crear la base de datos
 CREATE DATABASE RescateEmocional;
 GO
 
@@ -6,44 +6,60 @@ GO
 USE RescateEmocional;
 GO
 
--- Crear la tabla de roles
+-- Creación de la tabla de Roles
 CREATE TABLE Rol (
     IDRol INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre VARCHAR(50) NOT NULL,
-    Descripcion TEXT
+    Nombre NVARCHAR(50) NOT NULL,
+    Descripcion NVARCHAR(255) NOT NULL
 );
 GO
 
--- Crear la tabla de usuarios
+-- Habilitar la inserción manual de IDs
+SET IDENTITY_INSERT Rol ON;
+
+-- Insertar roles en la tabla Rol
+INSERT INTO Rol (IDRol, Nombre, Descripcion) 
+VALUES 
+    (1, 'Administrador', 'Son los administradores'),
+    (2, 'Organizaciones', 'Son las organizaciones'),
+    (3, 'Usuarios', 'Son los usuarios');
+
+-- Deshabilitar la inserción manual de IDs
+SET IDENTITY_INSERT Rol OFF;
+GO
+
+-- Creación de la tabla de Usuarios
 CREATE TABLE Usuario (
     IDUsuario INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
-    Telefono VARCHAR(20) NOT NULL,
-    Contrasena VARCHAR(255) NOT NULL,
-    Estado TINYINT NOT NULL,  -- 1 = Activo, 0 = Inactivo
+    Nombre NVARCHAR(100) NOT NULL,
+    CorreoElectronico NVARCHAR(100) UNIQUE NOT NULL,
+    Telefono NVARCHAR(20) NULL,
+    Contrasena NVARCHAR(255) NOT NULL,
+    Estado TINYINT NOT NULL DEFAULT 1,   -- 1 = Activo, 0 = Inactivo
     IDRol INT NOT NULL,
     FOREIGN KEY (IDRol) REFERENCES Rol(IDRol)
 );
 GO
 
--- Crear la tabla de organizaciones
+-- Creación de la tabla de Organizaciones
 CREATE TABLE Organizacion (
     IDOrganizacion INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Descripcion TEXT NOT NULL,
-    Horario VARCHAR(50) NOT NULL,
-    Ubicacion VARCHAR(255) NOT NULL,
-    Estado TINYINT NOT NULL,  -- 1 = Verificado, 0 = No verificado
+    Nombre NVARCHAR(100) NOT NULL,
+    CorreoElectronico NVARCHAR(100) UNIQUE NOT NULL,
+    Contrasena NVARCHAR(255) NOT NULL,
+    Descripcion NVARCHAR(255) NOT NULL,
+    Horario NVARCHAR(50) NOT NULL,
+    Ubicacion NVARCHAR(255) NOT NULL,
+    Estado TINYINT NOT NULL DEFAULT 0,   -- 1 = Verificado, 0 = No verificado
     IDRol INT NOT NULL,
     FOREIGN KEY (IDRol) REFERENCES Rol(IDRol)
 );
 GO
 
--- Crear la tabla de teléfonos
+-- Creación de la tabla de Teléfonos
 CREATE TABLE Telefono (
     IDTelefono INT IDENTITY(1,1) PRIMARY KEY,
-    TipoDeNumero VARCHAR(20) NOT NULL
+    TipoDeNumero NVARCHAR(20) NOT NULL
 );
 GO
 
@@ -57,10 +73,10 @@ CREATE TABLE OrganizacionTelefono (
 );
 GO
 
--- Crear la tabla de etiquetas
+-- Creación de la tabla de Etiquetas
 CREATE TABLE Etiqueta (
     IDEtiqueta INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre VARCHAR(50) NOT NULL
+    Nombre NVARCHAR(50) NOT NULL
 );
 GO
 
@@ -74,50 +90,55 @@ CREATE TABLE OrganizacionEtiqueta (
 );
 GO
 
--- Crear la tabla de administradores
+-- Creación de la tabla de Administradores
 CREATE TABLE Administrador (
     IDAdmin INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
-    Contrasena VARCHAR(255) NOT NULL,
+    Nombre NVARCHAR(100) NOT NULL,
+    CorreoElectronico NVARCHAR(100) UNIQUE NOT NULL,
+    Contrasena NVARCHAR(255) NOT NULL,
     IDRol INT NOT NULL,
     FOREIGN KEY (IDRol) REFERENCES Rol(IDRol)
 );
 GO
 
--- Crear la tabla de peticiones de verificación
+-- Creación de la tabla de Peticiones de Verificación
 CREATE TABLE PeticionVerificacion (
     IDPeticion INT IDENTITY(1,1) PRIMARY KEY,
     IDOrganizacion INT NOT NULL,
-    Estado TINYINT NOT NULL,  -- 0 = Pendiente, 1 = Aprobado, 2 = Rechazado
-    FechaSolicitud DATETIME NOT NULL,
-    Comentarios TEXT NULL,
+    Estado TINYINT NOT NULL DEFAULT 0,  -- 0 = Pendiente, 1 = Aprobado, 2 = Rechazado
+    FechaSolicitud DATETIME NOT NULL DEFAULT GETDATE(),
+    Comentarios NVARCHAR(255) NULL,
     IDAdmin INT NOT NULL,
     FOREIGN KEY (IDOrganizacion) REFERENCES Organizacion(IDOrganizacion),
     FOREIGN KEY (IDAdmin) REFERENCES Administrador(IDAdmin)
 );
 GO
 
--- Crear la tabla de conversaciones
+-- Creación de la tabla de Conversaciones
 CREATE TABLE Conversacion (
     IDConversacion INT IDENTITY(1,1) PRIMARY KEY,
     IDUsuario INT NOT NULL,
     IDOrganizacion INT NOT NULL,
-    FechaInicio DATETIME NOT NULL,
-    Mensaje TEXT NULL,
+    FechaInicio DATETIME NOT NULL DEFAULT GETDATE(),
+    Mensaje NVARCHAR(MAX) NULL,
+    Emisor NVARCHAR(50) NULL,
     FOREIGN KEY (IDUsuario) REFERENCES Usuario(IDUsuario),
     FOREIGN KEY (IDOrganizacion) REFERENCES Organizacion(IDOrganizacion)
 );
 GO
 
--- Crear la tabla de mensajes
+-- Creación de la tabla de Mensajes
 CREATE TABLE Mensaje (
     IDMensaje INT IDENTITY(1,1) PRIMARY KEY,
     IDConversacion INT NOT NULL,
-    Contenido TEXT NOT NULL,
-    FechaHora DATETIME NOT NULL,
-    Estado TINYINT NOT NULL,  -- 0 = Enviado, 1 = Leído, 2 = Respondido
-    FOREIGN KEY (IDConversacion) REFERENCES Conversacion(IDConversacion)
+    IDUsuario INT NULL,
+    IDOrganizacion INT NULL,
+    Contenido NVARCHAR(MAX) NOT NULL,
+    FechaHora DATETIME NOT NULL DEFAULT GETDATE(),
+    Estado TINYINT NOT NULL DEFAULT 0,  -- 0 = Enviado, 1 = Leído, 2 = Respondido
+    FOREIGN KEY (IDConversacion) REFERENCES Conversacion(IDConversacion),
+    FOREIGN KEY (IDUsuario) REFERENCES Usuario(IDUsuario),
+    FOREIGN KEY (IDOrganizacion) REFERENCES Organizacion(IDOrganizacion)
 );
 GO
 
@@ -141,117 +162,43 @@ CREATE TABLE AdministradorOrganizacion (
 );
 GO
 
--- Crear la tabla de diarios
+-- Creación de la tabla de Diarios
 CREATE TABLE Diario (
     IDDiario INT IDENTITY(1,1) PRIMARY KEY,
     IDUsuario INT NOT NULL,
-    Titulo VARCHAR(100) NOT NULL,
-    Contenido TEXT NOT NULL,
-    FechaCreacion DATETIME NOT NULL,
+    Titulo NVARCHAR(100) NOT NULL,
+    Contenido NVARCHAR(MAX) NOT NULL,
+    FechaCreacion DATETIME NOT NULL DEFAULT GETDATE(),
     FOREIGN KEY (IDUsuario) REFERENCES Usuario(IDUsuario)
 );
 GO
 
-
-
-use RescateEmocional;
--- Insertar un Administrador
-INSERT INTO Administrador (Nombre, CorreoElectronico, Contrasena, IDRol)
-VALUES ('Admin Principal', 'admin@email.com', '123456', 1);
-
--- Insertar una Organización
-INSERT INTO Organizacion (Nombre, Descripcion, Horario, Ubicacion, Estado, IDRol, CorreoElectronico, Contrasena) 
-VALUES ('Ayuda Social', 'Organización dedicada al bienestar emocional.', 'Lunes a Viernes, 9AM - 6PM', 'Calle Falsa 123, Ciudad', 1, 2, 'Organizacion@gmail.com', '123456');
-
--- Insertar un Usuario
-INSERT INTO Usuario (Nombre, CorreoElectronico, Telefono, Contrasena, Estado, IDRol)
-VALUES ('Juan Pérez', 'usuario@email.com', '123456789', '123456', 1, 3);
-
-SET IDENTITY_INSERT Rol ON;
-
-INSERT INTO Rol (IDRol, Nombre, Descripcion) 
+-- Insertar datos de prueba
+INSERT INTO Usuario (Nombre, CorreoElectronico, Telefono, Contrasena, Estado, IDRol) 
 VALUES 
-    (1, 'Administrador', 'Son los administradores'),
-    (2, 'Organizaciones', 'Son las organizaciones'),
-    (3, 'Usuarios', 'Son los usuarios');
-
-SET IDENTITY_INSERT Rol OFF;
-
-
-SELECT * FROM Administrador;
-SELECT * FROM Organizacion;
-SELECT * FROM Usuario;
-SELECT * FROM Rol;
-
-
-DELETE FROM Usuario;
-DELETE FROM Administrador;
-DELETE FROM Organizacion;
-
-ALTER TABLE Organizacion 
-ADD CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
-    Contrasena VARCHAR(255) NOT NULL;
-
-
-  
-
-    USE RescateEmocional;
+    ('Usuario1', 'usuario1@email.com', '123-456-7890', 'e10adc3949ba59abbe56e057f20f883e', 1, 3),
+    ('Usuario2', 'usuario2@email.com', '098-765-4321', 'e10adc3949ba59abbe56e057f20f883e', 1, 3);
 GO
 
--- Rol
-ALTER TABLE Rol
-ALTER COLUMN Descripcion NVARCHAR(255);
+INSERT INTO Organizacion (Nombre, CorreoElectronico, Contrasena, Descripcion, Horario, Ubicacion, Estado, IDRol) 
+VALUES 
+    ('Org1', 'org1@email.com', 'e10adc3949ba59abbe56e057f20f883e', 'Organización de apoyo emocional', '9:00-17:00', 'Ciudad X', 0, 2),
+    ('Org2', 'org2@email.com', 'e10adc3949ba59abbe56e057f20f883e', 'Ayuda psicológica', '10:00-18:00', 'Ciudad Y', 0, 2);
 GO
 
--- Usuario
-ALTER TABLE Usuario
-ALTER COLUMN Telefono VARCHAR(20) NULL;
+INSERT INTO Administrador (Nombre, CorreoElectronico, Contrasena, IDRol)
+VALUES 
+    ('Admin1', 'admin1@email.com', 'e10adc3949ba59abbe56e057f20f883e', 1);
 GO
 
-ALTER TABLE Usuario
-ADD CONSTRAINT DF_Usuario_Estado DEFAULT 1 FOR Estado;
+INSERT INTO Conversacion (IDUsuario, IDOrganizacion, Mensaje, Emisor)
+VALUES 
+    (1, 1, 'Hola, necesito ayuda', 'Usuario'),
+    (2, 2, 'Buenas, ¿cómo podemos ayudar?', 'Organizacion');
 GO
 
--- Organizacion
-ALTER TABLE Organizacion
-ADD CorreoElectronico VARCHAR(100) NOT NULL UNIQUE,
-    Contrasena VARCHAR(255) NOT NULL;
-GO
-
-ALTER TABLE Organizacion
-ADD CONSTRAINT DF_Organizacion_Estado DEFAULT 0 FOR Estado;
-GO
-
--- PeticionVerificacion
-ALTER TABLE PeticionVerificacion
-ADD CONSTRAINT DF_PeticionVerificacion_Estado DEFAULT 0 FOR Estado;
-GO
-
-ALTER TABLE PeticionVerificacion
-ADD CONSTRAINT DF_PeticionVerificacion_FechaSolicitud DEFAULT GETDATE() FOR FechaSolicitud;
-GO
-
--- Conversacion
-ALTER TABLE Conversacion
-ADD Emisor NVARCHAR(50) NULL;
-GO
-
-ALTER TABLE Conversacion
-ADD CONSTRAINT DF_Conversacion_FechaInicio DEFAULT GETDATE() FOR FechaInicio;
-GO
-
--- Mensaje
-ALTER TABLE Mensaje
-ADD IDUsuario INT NULL,
-    IDOrganizacion INT NULL;
-GO
-
-ALTER TABLE Mensaje
-ADD CONSTRAINT FK_Mensaje_Usuario FOREIGN KEY (IDUsuario) REFERENCES Usuario(IDUsuario),
-    CONSTRAINT FK_Mensaje_Organizacion FOREIGN KEY (IDOrganizacion) REFERENCES Organizacion(IDOrganizacion);
-GO
-
-ALTER TABLE Mensaje
-ADD CONSTRAINT DF_Mensaje_FechaHora DEFAULT GETDATE() FOR FechaHora,
-    CONSTRAINT DF_Mensaje_Estado DEFAULT 0 FOR Estado;
+INSERT INTO Mensaje (IDConversacion, IDUsuario, IDOrganizacion, Contenido, FechaHora, Estado)
+VALUES 
+    (1, 1, NULL, 'Hola, necesito ayuda', GETDATE(), 0),
+    (2, NULL, 2, 'Buenas, ¿cómo podemos ayudar?', GETDATE(), 0);
 GO
