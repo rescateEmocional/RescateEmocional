@@ -25,10 +25,13 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="CorreoElectronico" class="form-label"><i class="bi bi-envelope-fill me-2"></i> @Html.DisplayNameFor(model => model.CorreoElectronico)</label>
-                            <input asp-for="CorreoElectronico" type="email" class="form-control" />
+                            <label asp-for="CorreoElectronico" class="form-label">
+                                <i class="bi bi-envelope-fill me-2"></i> @Html.DisplayNameFor(model => model.CorreoElectronico)
+                            </label>
+                            <input asp-for="CorreoElectronico" type="email" class="form-control" readonly />
                             <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
                         </div>
+
 
                         <div class="mb-3">
                             <label asp-for="Telefono" class="form-label"><i class="bi bi-telephone-fill me-2"></i> @Html.DisplayNameFor(model => model.Telefono)</label>
@@ -42,11 +45,7 @@
                             <span asp-validation-for="Contrasena" class="text-danger"></span>
                         </div>
 
-                        <div class="form-check form-switch mb-3">
-                            <input asp-for="Estado" class="form-check-input" />
-                            <label asp-for="Estado" class="form-check-label">Activo</label>
-                        </div>
-
+         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-save-fill me-2"></i> Guardar Cambios

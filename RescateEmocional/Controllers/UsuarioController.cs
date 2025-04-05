@@ -8,6 +8,8 @@ using RescateEmocional.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace RescateEmocional.Controllers
 {
@@ -21,10 +23,20 @@ namespace RescateEmocional.Controllers
             _context = context;
         }
 
+        private string EncriptarMD5(string input)
+        {
+            using (var md5 = MD5.Create())
+            {
+                var inputBytes = Encoding.ASCII.GetBytes(input);
+                var hashBytes = md5.ComputeHash(inputBytes);
+                return Convert.ToHexString(hashBytes);
+            }
+        }
+
         public async Task<IActionResult> Organizaciones(string nombre, int topRecords = 10)
         {
             var organizacionesQuery = _context.Organizacions
-                .Where(o => o.Estado == 1) // Solo organizaciones verificadas
+                .Where(o => o.Estado == 1)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(nombre))
@@ -41,20 +53,16 @@ namespace RescateEmocional.Controllers
             return View(organizaciones);
         }
 
-
-
-
-        //LOGICA DEL PERFIL
         public async Task<IActionResult> Perfil()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Obtener ID del usuario autenticado
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
             var usuario = await _context.Usuarios
-                .Include(u => u.IdrolNavigation) // Para obtener el nombre del rol
+                .Include(u => u.IdrolNavigation)
                 .FirstOrDefaultAsync(u => u.Idusuario == int.Parse(userId));
 
             if (usuario == null)
@@ -65,20 +73,12 @@ namespace RescateEmocional.Controllers
             return View(usuario);
         }
 
-
-
-
-
-
-
-        // GET: Usuario
         public async Task<IActionResult> Index()
         {
             var rescateEmocionalContext = _context.Usuarios.Include(u => u.IdrolNavigation);
             return View(await rescateEmocionalContext.ToListAsync());
         }
 
-        // GET: Usuario/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -97,20 +97,20 @@ namespace RescateEmocional.Controllers
             return View(usuario);
         }
 
-        // GET: Usuario/Create
         public IActionResult Create()
         {
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Idrol");
             return View();
         }
 
-        // POST: Usuario/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Idusuario,Nombre,CorreoElectronico,Telefono,Contrasena,Estado,Idrol")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {
+                // Encriptar contraseña antes de guardar
+                usuario.Contrasena = EncriptarMD5(usuario.Contrasena);
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -119,7 +119,6 @@ namespace RescateEmocional.Controllers
             return View(usuario);
         }
 
-        // GET: Usuario/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -149,21 +148,27 @@ namespace RescateEmocional.Controllers
             {
                 try
                 {
-                    // Obtener el usuario actual de la base de datos
                     var usuarioExistente = await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Idusuario == id);
                     if (usuarioExistente == null)
                     {
                         return NotFound();
                     }
 
-                    // Mantener el IDRol actual
                     usuario.Idrol = usuarioExistente.Idrol;
 
-                    // Actualizar usuario
+                    if (!string.IsNullOrWhiteSpace(usuario.Contrasena) &&
+                        EncriptarMD5(usuario.Contrasena) != usuarioExistente.Contrasena)
+                    {
+                        usuario.Contrasena = EncriptarMD5(usuario.Contrasena);
+                    }
+                    else
+                    {
+                        usuario.Contrasena = usuarioExistente.Contrasena;
+                    }
+
                     _context.Update(usuario);
                     await _context.SaveChangesAsync();
 
-                    // Redirigir al perfil
                     return RedirectToAction("Perfil");
                 }
                 catch (DbUpdateConcurrencyException)
@@ -183,9 +188,6 @@ namespace RescateEmocional.Controllers
             return View(usuario);
         }
 
-        
-
-        // GET: Usuario/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -204,7 +206,6 @@ namespace RescateEmocional.Controllers
             return View(usuario);
         }
 
-        // POST: Usuario/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
