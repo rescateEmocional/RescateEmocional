@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace RescateEmocional.Controllers
 {
-    [Authorize(Roles = "3")] // Aplica un filtro de autorización que requiere que el usuario tenga el rol "3" para acceder a las acciones de este controlador.
+    [Authorize(Roles = "3")] // Aplica un filtro de autorización que requiere que el usuario tenga el rol "3" para acceder a las acciones de este controlador. crud de diario
     public class DiarioController : Controller // Define la clase DiarioController, que hereda de la clase base Controller de ASP.NET Core MVC.
     {
         private readonly RescateEmocionalContext _context; // Declara un campo privado de solo lectura para almacenar el contexto de la base de datos RescateEmocional.
