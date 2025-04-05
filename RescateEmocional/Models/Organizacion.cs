@@ -48,6 +48,7 @@ public partial class Organizacion
 
     // Relaciones (no requieren validaciones adicionales aquí)
     public virtual ICollection<Conversacion> Conversacions { get; set; } = new List<Conversacion>();
+    [Display(Name = "Rol")]
     public virtual Rol? IdrolNavigation { get; set; } = null!;
     public virtual ICollection<PeticionVerificacion> PeticionVerificacions { get; set; } = new List<PeticionVerificacion>();
     public virtual ICollection<Administrador> Idadmins { get; set; } = new List<Administrador>();
