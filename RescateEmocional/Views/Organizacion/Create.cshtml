@@ -103,10 +103,8 @@
             form.addEventListener('submit', async function(event) {
                 event.preventDefault();
 
-                // Reiniciar mensajes de error
                 emailError.textContent = '';
 
-                // Validación básica del cliente
                 if (!form.checkValidity()) {
                     form.classList.add('was-validated');
                     return;
@@ -125,21 +123,27 @@
                         }
                     });
 
-                    const result = await response.json().catch(() => null);
-
-                    if (response.ok && result) {
-                        window.location.href = '@Url.Action("Index")';
-                    } else {
-                        // Manejar error de correo duplicado
-                        if (response.status === 400 && result.errors?.CorreoElectronico) {
-                            emailError.textContent = result.errors.CorreoElectronico[0];
-                        } else if (response.status === 500 && result.includes('duplicate')) {
-                            emailError.textContent = 'El correo electrónico ya está registrado';
-                        }
+                    // Verificar si es una redirección
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return;
                     }
+
+                    // Manejar errores
+                    const responseText = await response.text();
+                    const parser = new DOMParser();
+                    const htmlDoc = parser.parseFromString(responseText, 'text/html');
+
+                    // Extraer errores del HTML de respuesta
+                    const serverEmailError = htmlDoc.querySelector('[data-valmsg-for="CorreoElectronico"]');
+
+                    if (serverEmailError) {
+                        emailError.textContent = serverEmailError.textContent;
+                    }
+
                 } catch (error) {
                     console.error('Error:', error);
-                    emailError.textContent = 'Error al procesar la solicitud';
+                    emailError.textContent = 'Error de conexión con el servidor';
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<i class="bi bi-save me-2"></i>Guardar Organización';
