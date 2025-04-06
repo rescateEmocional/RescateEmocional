@@ -26,7 +26,7 @@ namespace RescateEmocional.Controllers
         }
 
         // Acción que devuelve una lista de administradores según los filtros aplicados
-        // Se puede filtrar por nombre, correo electrónico y limitar el número de registros (por defecto 10)
+        // Se puede filtrar por nombre, correo electrónico y limitar el número de registros (por defecto 10) vista index de admin
         public async Task<IActionResult> Index(Administrador administrador, int topRegistro = 10)
         {
             // Se obtiene una consulta de todos los administradores
@@ -73,7 +73,7 @@ namespace RescateEmocional.Controllers
             return View(administrador); // Si se encuentra el administrador, lo pasa a la vista predeterminada asociada a esta acción para mostrar los detalles del administrador.
         }
 
-        // GET: Administrador/Create
+        // GET: Administrador/Create Logica de crear
         public IActionResult Create() // Acción que responde a solicitudes HTTP GET para mostrar el formulario de creación de un nuevo administrador
         {
             ViewData["Idrol"] = new SelectList(_context.Rols, "Idrol", "Nombre"); // Llena un SelectList con los roles disponibles, usando "Idrol" como valor y "Nombre" como texto a mostrar
@@ -123,7 +123,7 @@ namespace RescateEmocional.Controllers
         }
 
 
-        // GET: Administrador/Edit/5
+        // GET: Administrador/Edit/5 editar perfil
         public async Task<IActionResult> Edit(int? id) // Acción que se ejecuta cuando el usuario quiere editar un administrador
         {
             if (id == null) // Verifica si el id proporcionado es nulo
@@ -204,7 +204,7 @@ namespace RescateEmocional.Controllers
             }
         }
 
-        // GET: Administrador/Delete/5
+        // GET: Administrador/Delete/5 eliminar administrador
         public async Task<IActionResult> Delete(int? id) // Acción GET para mostrar el formulario de confirmación de eliminación
         {
             if (id == null) // Verifica si el id proporcionado es nulo

@@ -129,7 +129,7 @@ public class AccountController : Controller
     }
     public IActionResult AccesoDenegado()
     {
-        ViewBag.Mensaje = "No tienes acceso a esta pagina :v";
+        ViewBag.Mensaje = "No tienes acceso a esta pagina";
         return View();
     }
 

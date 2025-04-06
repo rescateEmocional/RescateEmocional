@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations; // Necesario para Data Annotations
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RescateEmocional.Models;
@@ -33,9 +33,11 @@ public partial class Organizacion
     [Required(ErrorMessage = "El rol es obligatorio.")]
     public int Idrol { get; set; }
 
+    // CAMPO MODIFICADO (solo se agregó [Display])
     [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
     [EmailAddress(ErrorMessage = "Formato de correo electrónico inválido.")]
     [StringLength(254, ErrorMessage = "El correo no puede exceder los 254 caracteres.")]
+    [Display(Name = "Correo Electrónico")] // <- Esta es la línea añadida
     public string CorreoElectronico { get; set; } = null!;
 
     [Required(ErrorMessage = "La contraseña es obligatoria.")]
@@ -46,7 +48,7 @@ public partial class Organizacion
     )]
     public string Contrasena { get; set; } = null!;
 
-    // Relaciones (no requieren validaciones adicionales aquí)
+    // Relaciones
     public virtual ICollection<Conversacion> Conversacions { get; set; } = new List<Conversacion>();
     [Display(Name = "Rol")]
     public virtual Rol? IdrolNavigation { get; set; } = null!;

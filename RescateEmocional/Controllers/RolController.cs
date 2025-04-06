@@ -21,7 +21,7 @@ namespace RescateEmocional.Controllers // Define el espacio de nombres donde res
         }
 
         // GET: Rol // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta base del controlador "Rol".
-        public async Task<IActionResult> Index() // Define una acción asíncrona llamada Index que devuelve un IActionResult.
+        public async Task<IActionResult> Index() // Define una acción asíncrona llamada Index que devuelve un IActionResult. ver los roles
         {
             return View(await _context.Rols.ToListAsync()); // Recupera todos los registros de la tabla "Rols" de la base de datos de forma asíncrona y los pasa a la vista predeterminada asociada a esta acción.
         }
@@ -66,7 +66,7 @@ namespace RescateEmocional.Controllers // Define el espacio de nombres donde res
             return View(rol); // Si el modelo no es válido, devuelve la vista asociada a la acción Create, pasando el objeto Rol para que se puedan mostrar los errores de validación en el formulario.
         }
 
-        // GET: Rol/Edit/5 // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta "Rol/Edit/{id}", donde {id} es un parámetro.
+        // GET: Rol/Edit/5 // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta "Rol/Edit/{id}", donde {id} es un parámetro. editar rol
         public async Task<IActionResult> Edit(int? id) // Define una acción asíncrona llamada Edit que recibe un parámetro entero nullable llamado "id" y devuelve un IActionResult.
         {
             if (id == null) // Verifica si el parámetro "id" es nulo.
@@ -116,7 +116,7 @@ namespace RescateEmocional.Controllers // Define el espacio de nombres donde res
             }
             return View(rol); // Si el modelo no es válido, devuelve la vista asociada a la acción Edit, pasando el objeto Rol para que se puedan mostrar los errores de validación en el formulario.
         }
-        // GET: Rol/Delete/5 // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta "Rol/Delete/{id}", donde {id} es un parámetro.
+        // GET: Rol/Delete/5 // Comentario que indica que la siguiente acción responde a una petición HTTP GET en la ruta "Rol/Delete/{id}", donde {id} es un parámetro. Eliminar
         public async Task<IActionResult> Delete(int? id) // Define una acción asíncrona llamada Delete que recibe un parámetro entero nullable llamado "id" y devuelve un IActionResult.
         {
             if (id == null) // Verifica si el parámetro "id" es nulo.
